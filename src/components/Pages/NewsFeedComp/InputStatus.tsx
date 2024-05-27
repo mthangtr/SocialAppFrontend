@@ -30,10 +30,11 @@ function InputStatus() {
     return (
         <>
             {/* Phần upload status */}
-            <div className="border p-4 rounded-lg shadow-lg mb-6 flex items-center " onClick={handleStatusClick}>
+            <div className="border p-4 rounded-lg shadow-lg mb-6 flex items-center " >
                 <Avatar className="mr-4" src="https://github.com/shadcn.png" size="md" />
                 <Input
-                    className="w-full border rounded-lg px-4 py-2 cursor-pointer bg-gray-100 dark:bg-gray-700 focus:outline-none focus:border-none"
+                    onClick={handleStatusClick}
+                    className="w-full border rounded-lg px-4 py-2 cursor-pointer bg-gray-100 dark:bg-gray-700"
                     type='text'
                     placeholder="What's on your mind?"
                     readOnly
@@ -42,7 +43,7 @@ function InputStatus() {
 
             {/* Modal để nhập status */}
             <Transition show={isModalOpen} as={React.Fragment}>
-                <Dialog open={isModalOpen} onClose={handleCloseModal} className="fixed z-10 inset-0 overflow-y-auto backdrop-blur-md bg-white/30">
+                <Dialog open={isModalOpen} onClose={handleCloseModal} className="fixed z-10 inset-0 overflow-y-auto backdrop-blur-sm bg-white/30">
                     <div className="flex items-center justify-center min-h-screen">
                         <Transition.Child
                             as={React.Fragment}
