@@ -17,7 +17,7 @@ import { Button } from "../ui/button";
 import { Input } from "@/components/ui/inputShadcn"
 import SendIcon from '@mui/icons-material/Send';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import ModeToggle from "@/components/ui/ThemeToggle";
+import ModeToggle from "@/components/Buttons/ThemeToggle";
 
 function Header() {
     return (

@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Avatar } from "@nextui-org/react";
 import { Input } from "@/components/ui/inputShadcn";
-import { Dialog, DialogPanel, DialogTitle, Transition } from '@headlessui/react';
+import { Dialog, Textarea, Transition } from '@headlessui/react';
 import { Button } from "../../ui/button";
 
 function InputStatus() {
@@ -22,7 +22,6 @@ function InputStatus() {
     };
 
     const handlePostStatus = () => {
-        // Handle posting the status here
         console.log('Status posted:', status);
         setIsModalOpen(false);
         setStatus('');
@@ -66,14 +65,14 @@ function InputStatus() {
                             leaveFrom="opacity-100 scale-100"
                             leaveTo="opacity-0 scale-95"
                         >
-                            <Dialog.Panel className="bg-background p-6 rounded-lg shadow-lg w-full max-w-md mx-auto z-20">
+                            <Dialog.Panel className="bg-background p-6 rounded-lg shadow-lg w-full max-w-3xl mx-auto z-20">
                                 <Dialog.Title className="text-lg font-semibold mb-4">Create Post</Dialog.Title>
-                                <Input
-                                    className="w-full border border-gray-300 rounded-lg px-4 py-2 mb-4"
-                                    type='text'
+                                <Textarea
+                                    className="mt-3 block w-full resize-none rounded-lg border-none bg-white/5 py-1.5 px-3 text-sm/6 focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25"
                                     value={status}
                                     onChange={handleStatusChange}
                                     placeholder="What's on your mind?"
+                                    autoFocus={false}
                                 />
                                 <div className="flex justify-end">
                                     <Button variant={"ghost"} className="mr-2 px-4 py-2 " onClick={handleCloseModal}>Cancel</Button>

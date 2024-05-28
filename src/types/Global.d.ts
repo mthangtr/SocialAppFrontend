@@ -3,7 +3,7 @@ type PostID = string;
 type CommentID = string;
 
 // User Schema
-interface User {
+export interface User {
   username: string;
   email: string;
   password: string;
@@ -13,13 +13,13 @@ interface User {
 }
 
 // Reaction Schema
-interface Reaction {
+export interface Reaction {
   user: UserID;
   type: string;
 }
 
 // Post Schema
-interface Post {
+export interface Post {
   user: UserID;
   content: string;
   media: string;
@@ -31,18 +31,18 @@ interface Post {
 }
 
 // Comment Schema
-interface Comment {
+export interface Comment {
   post: PostID;
   user: UserID;
   content: string;
   reactions: Reaction[];
   replies: CommentID[];
   createdAt: Date;
-  updatedAt: Date;
+  updatedAt: Date | null;
 }
 
 // Friend Request Schema
-interface FriendRequest {
+export interface FriendRequest {
   from: UserID;
   to: UserID;
   status: string;
