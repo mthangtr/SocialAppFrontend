@@ -57,7 +57,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-
 ::-webkit-scrollbar {
   width: 8px; /* width of the entire scrollbar */
   height: 8px; /* height of the horizontal scrollbar */

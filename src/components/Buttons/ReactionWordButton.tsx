@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
 import Tippy from '@tippyjs/react';
-import { ThumbsUp } from 'lucide-react';
 import 'tippy.js/dist/tippy.css';
+import 'tippy.js/animations/shift-away.css';
+import 'tippy.js/themes/material.css';
 
 const reactions = [
-    { emoji: '👍', label: 'Like' },
-    { emoji: '❤️', label: 'Love' },
-    { emoji: '😂', label: 'Haha' },
-    { emoji: '😮', label: 'Wow' },
-    { emoji: '😢', label: 'Sad' },
-    { emoji: '😡', label: 'Angry' },
+    { emoji: '👍', label: 'Like', color: '#1877f2' },
+    { emoji: '❤️', label: 'Love', color: '#e0245e' },
+    { emoji: '😂', label: 'Haha', color: '#f7b928' },
+    { emoji: '😮', label: 'Wow', color: '#f7b928' },
+    { emoji: '😢', label: 'Sad', color: '#f7b928' },
+    { emoji: '😡', label: 'Angry', color: '#d93f33' },
 ];
 
-const ReactionButton = ({ onReact }: { onReact: (reaction: string) => void }) => {
+const ReactionWordButton = ({ onReact }: { onReact: (reaction: string) => void }) => {
     const [selectedReaction, setSelectedReaction] = useState<string | null>(null);
 
     const handleReaction = (reaction: string) => {
@@ -25,42 +26,51 @@ const ReactionButton = ({ onReact }: { onReact: (reaction: string) => void }) =>
         }
     };
 
-    const getEmoji = () => {
-        const reaction = reactions.find(r => r.label === selectedReaction);
-        return reaction ? reaction.emoji : <ThumbsUp size={"24px"} />;
-    };
-
     const handleButtonClick = () => {
         if (selectedReaction) {
             setSelectedReaction(null);
+            onReact('Like');
+        } else {
+            setSelectedReaction('Like');
             onReact('Like');
         }
     };
 
     return (
         <Tippy
+            className="shadow-lg rounded-lg select-none"
+            theme={'material'}
+            arrow={false}
+            animation={'shift-away'}
             content={
                 <div className="flex space-x-2">
-                    {reactions.map((reaction) => (
-                        <button
-                            key={reaction.label}
-                            onClick={() => handleReaction(reaction.label)}
-                            className="text-2xl"
-                            aria-label={reaction.label}
-                        >
-                            {reaction.emoji}
-                        </button>
-                    ))}
+                    {
+                        reactions.map((reaction) => (
+                            <button
+                                key={reaction.label}
+                                onClick={() => handleReaction(reaction.label)}
+                                className="text-2xl"
+                                aria-label={reaction.label}
+                                style={{ color: reaction.color }}
+                            >
+                                {reaction.emoji}
+                            </button>
+                        ))
+                    }
                 </div>
             }
             interactive={true}
-            placement="top"
+            placement="top-start"
         >
-            <button className="flex items-center w-12 justify-center" onClick={handleButtonClick}>
-                <span className="ml-1">{selectedReaction ? selectedReaction : 'Like'}</span>
+            <button
+                className="text-sm font-semibold hover:underline text-gray-500 dark:text-gray-400 select-none"
+                onClick={handleButtonClick}
+                style={{ color: selectedReaction ? reactions.find(r => r.label === selectedReaction)?.color : '' }}
+            >
+                {selectedReaction ? selectedReaction : 'Like'}
             </button>
         </Tippy>
     );
 };
 
-export default ReactionButton;
+export default ReactionWordButton;
