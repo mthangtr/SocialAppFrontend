@@ -1,13 +1,17 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Avatar } from "@nextui-org/react";
 import { Input } from "@/components/ui/inputShadcn";
 import { Dialog, Textarea, Transition } from '@headlessui/react';
 import { Button } from "../../ui/button";
+import { Upload } from 'lucide-react';
 
 function InputStatus() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [status, setStatus] = useState('');
+    const [images, setImages] = useState<File[]>([]);
+    const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+    const fileInputRef = useRef(null);
 
     const handleStatusClick = () => {
         setIsModalOpen(true);
@@ -21,11 +25,53 @@ function InputStatus() {
         setStatus(e.target.value);
     };
 
+    const handleImageChange = (e: any) => {
+        const files: File[] = Array.from(e.target.files);
+        setImages(files);
+
+        const previews: Promise<string>[] = files.map(file => {
+            const reader = new FileReader();
+            return new Promise<string>((resolve) => {
+                reader.onloadend = () => {
+                    resolve(reader.result as string);
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+
+        Promise.all(previews).then(previews => {
+            setImagePreviews(previews);
+        });
+    };
+
     const handlePostStatus = () => {
+        const formData = new FormData();
+        formData.append('status', status);
+        images.forEach((image, index) => {
+            formData.append(`image${index}`, image);
+        });
+
+        // Here you would send formData to your backend
+        // For example: axios.post('/api/status', formData);
+
         console.log('Status posted:', status);
+        if (images.length > 0) {
+            console.log('Images posted:', images.map(image => image.name));
+        }
+
         setIsModalOpen(false);
         setStatus('');
+        setImages([]);
+        setImagePreviews([]);
     };
+
+    const triggerFileInput = () => {
+        if (fileInputRef.current === null) {
+            return;
+        }
+        (fileInputRef.current as HTMLInputElement).click();
+    };
+
     return (
         <>
             {/* Phần upload status */}
@@ -74,8 +120,26 @@ function InputStatus() {
                                     placeholder="What's on your mind?"
                                     autoFocus={false}
                                 />
-                                <div className="flex justify-end">
-                                    <Button variant={"ghost"} className="mr-2 px-4 py-2 " onClick={handleCloseModal}>Cancel</Button>
+                                <div className="mt-3">
+                                    <button onClick={triggerFileInput} className="flex items-center justify-center w-12 h-12 ">
+                                        <Upload className="w-6 h-6 text-gray-600" />
+                                    </button>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        multiple
+                                        onChange={handleImageChange}
+                                        ref={fileInputRef}
+                                        className="hidden"
+                                    />
+                                </div>
+                                <div className="mt-3 flex flex-wrap gap-2">
+                                    {imagePreviews.map((preview, index) => (
+                                        <img key={index} src={preview} alt={`Image Preview ${index}`} className="w-24 h-24 rounded-lg" />
+                                    ))}
+                                </div>
+                                <div className="flex justify-end mt-4">
+                                    <Button variant={"ghost"} className="mr-2 px-4 py-2" onClick={handleCloseModal}>Cancel</Button>
                                     <Button variant={"default"} onClick={handlePostStatus}>Post</Button>
                                 </div>
                             </Dialog.Panel>

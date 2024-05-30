@@ -21,7 +21,7 @@ import ModeToggle from "@/components/Buttons/ThemeToggle";
 
 function Header() {
     return (
-        <header className="bg-background px-4 py-2 border-b-2 shadow-md sticky top-0 z-10 w-full">
+        <header className="bg-background px-4 py-2 border-b-2 shadow-md fixed top-0 z-10 w-full">
             <Menubar className="flex justify-between items-center space-x-4">
                 <div className="flex-1">
                     <Input type="search" placeholder="Search..." className="w-full max-w-xs" />

@@ -11,7 +11,7 @@ import { Button } from "../ui/button";
 
 function RightSidebar() {
     return (
-        <aside className="w-full h-full p-4">
+        <aside className="w-full h-full p-4 bg-background">
             <Button variant={"ghost"} className="flex justify-start mb-4 py-7 w-full">
                 <Avatar className="cursor-pointer">
                     <AvatarImage

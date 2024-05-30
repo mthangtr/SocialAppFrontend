@@ -10,7 +10,7 @@ function HomeLayout({ children }: { children: React.ReactNode }) {
                 <div className="fixed top-0 left-0 h-full w-1/5 min-w-[200px] overflow-y-auto pt-14">
                     <LeftSidebar />
                 </div>
-                <div className="flex-1 ml-[20%] mr-[20%] min-w-[400px] overflow-y-auto min-h-screen">
+                <div className="flex-1 ml-[20%] mr-[20%] min-w-[400px] overflow-y-auto min-h-screen pt-14">
                     {children}
                 </div>
                 <div className="fixed top-0 right-0 h-full w-1/5 min-w-[200px] overflow-y-auto pt-14">
