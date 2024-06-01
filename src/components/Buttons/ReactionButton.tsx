@@ -30,7 +30,7 @@ const ReactionButton = ({ onReact }: { onReact: (reaction: string) => void }) =>
 
     const getReaction = () => {
         const reaction = reactions.find(r => r.label === selectedReaction);
-        return reaction ? { emoji: reaction.emoji, color: reaction.color } : { emoji: <ThumbsUp className='mr-1' size={"18px"} />, color: '#000' };
+        return reaction ? { emoji: reaction.emoji, color: reaction.color } : { emoji: <ThumbsUp className='mr-1' size={"18px"} />, color: '' };
     };
 
     const handleButtonClick = () => {
@@ -47,6 +47,7 @@ const ReactionButton = ({ onReact }: { onReact: (reaction: string) => void }) =>
 
     return (
         <Tippy className="shadow-lg rounded-lg select-none"
+            delay={300}
             duration={250}
             theme={'material'}
             arrow={false}
@@ -72,7 +73,7 @@ const ReactionButton = ({ onReact }: { onReact: (reaction: string) => void }) =>
         >
             <Button variant={"ghost"} className="flex items-center px-2 w-24 justify-center select-none" onClick={handleButtonClick}>
                 {typeof emoji === 'string' ? <span className='text-2xl'>{emoji}</span> : emoji}
-                <span className="ml-1 " style={{ color: color }}>{selectedReaction ? selectedReaction : 'Like'}</span>
+                <span className="ml-1" style={{ color: color }}>{selectedReaction ? selectedReaction : 'Like'}</span>
             </Button>
         </Tippy >
     );

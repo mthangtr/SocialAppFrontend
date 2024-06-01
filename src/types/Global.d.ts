@@ -19,10 +19,11 @@ export interface Reaction {
 }
 
 // Post Schema
-export interface Post {
-  user: UserID;
+export interface PostType {
+  _id: PostID;
+  user: User;
   content: string;
-  media: string;
+  media: string[];
   reactions: Reaction[];
   comments: CommentID[];
   privacy: string;

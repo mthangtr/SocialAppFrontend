@@ -39,6 +39,7 @@ const ReactionWordButton = ({ onReact }: { onReact: (reaction: string) => void }
     return (
         <Tippy
             className="shadow-lg rounded-lg select-none"
+            delay={300}
             theme={'material'}
             arrow={false}
             animation={'shift-away'}
@@ -63,7 +64,7 @@ const ReactionWordButton = ({ onReact }: { onReact: (reaction: string) => void }
             placement="top-start"
         >
             <button
-                className="text-sm font-semibold hover:underline text-gray-500 dark:text-gray-400 select-none"
+                className="text-sm font-semibold hover:underline text-gray-500 dark:text-white/50 select-none"
                 onClick={handleButtonClick}
                 style={{ color: selectedReaction ? reactions.find(r => r.label === selectedReaction)?.color : '' }}
             >

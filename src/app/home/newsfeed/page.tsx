@@ -1,12 +1,24 @@
 "use client";
-import InputStatus from '@/components/Pages/NewsFeedComp/InputStatus';
-import Post from '@/components/Pages/NewsFeedComp/Posts';
+import Feed from '@/components/Pages/NewsFeedComp/Feed';
+import { getPosts } from '@/services/postService';
+import { PostType } from '@/types/Global';
+import { useEffect, useState } from 'react';
 
 export default function NewsFeed() {
-    return (
-        <div className="container mx-auto p-6">
-            <InputStatus />
-            <Post />
-        </div>
-    );
+    const [posts, setPosts] = useState<PostType[]>([]); // Khởi tạo `posts` như một mảng rỗng
+
+    useEffect(() => {
+        const fetchPosts = async () => {
+            try {
+                const postData: any = await getPosts();
+                setPosts(postData);
+            } catch (error) {
+                console.error("Failed to fetch posts:", error);
+            }
+        };
+
+        fetchPosts();
+    }, []);
+
+    return <Feed postData={posts} />;
 }

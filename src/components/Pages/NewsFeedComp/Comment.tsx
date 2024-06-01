@@ -33,20 +33,20 @@ function Comment() {
                 <div className=" px-2 rounded-lg flex-1">
                     <p className="font-semibold text-sm">Commenter Name</p>
                     <p className="text-sm text-wrap mt-1">{displayText}
-                        <button onClick={toggleShowMore} className="select-none text-sm font-medium hover:underline ml-2 text-gray-500 dark:text-gray-400">
+                        <button onClick={toggleShowMore} className="select-none text-sm font-medium hover:underline ml-2 text-gray-500 dark:text-white/50">
                             {showFullText ? 'Show less' : "Show more"}
                         </button>
                     </p>
                     <div className="flex items-center mt-2">
                         <ReactionWordButton onReact={handleReaction} />
-                        <button onClick={toggleRepliesInput} className='text-gray-500 dark:text-gray-400 font-semibold hover:underline text-sm ml-2 select-none'>Reply</button>
+                        <button onClick={toggleRepliesInput} className='text-gray-500 dark:text-white/50 font-semibold hover:underline text-sm ml-2 select-none'>Reply</button>
                     </div>
                 </div>
             </div>
             {showRepliesInput && (
                 <div className="flex items-center mt-2 ml-14">
                     <Avatar className="mr-2" src="https://i.pravatar.cc/150?u=a04258a2462d826712d" size="sm" />
-                    <Input className="w-full border bg-gray-100 rounded-lg px-4 py-2 dark:border-gray-600 dark:bg-gray-700" type='text' placeholder="Write your comment..." />
+                    <Input className="w-full border bg-gray-100 rounded-lg px-4 py-2 dark:bg-[hsl(0,0%,20%)]" type='text' placeholder="Write your comment..." />
                 </div>
             )}
         </div>

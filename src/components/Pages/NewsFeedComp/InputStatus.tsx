@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Avatar } from "@nextui-org/react";
 import { Input } from "@/components/ui/inputShadcn";
 import { Dialog, Textarea, Transition } from '@headlessui/react';
@@ -12,6 +12,7 @@ function InputStatus() {
     const [images, setImages] = useState<File[]>([]);
     const [imagePreviews, setImagePreviews] = useState<string[]>([]);
     const fileInputRef = useRef(null);
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
 
     const handleStatusClick = () => {
         setIsModalOpen(true);
@@ -72,6 +73,13 @@ function InputStatus() {
         (fileInputRef.current as HTMLInputElement).click();
     };
 
+    useEffect(() => {
+        if (textareaRef.current) {
+            textareaRef.current.style.height = 'auto';
+            textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px';
+        }
+    }, [status]);
+
     return (
         <>
             {/* Phần upload status */}
@@ -79,7 +87,7 @@ function InputStatus() {
                 <Avatar className="mr-4" src="https://github.com/shadcn.png" size="md" />
                 <Input
                     onClick={handleStatusClick}
-                    className="w-full border rounded-lg px-4 py-2 cursor-pointer bg-gray-100 dark:bg-gray-700"
+                    className="w-full border rounded-lg px-4 py-2 cursor-pointer bg-gray-100 dark:bg-[hsl(0,0%,20%)]"
                     type='text'
                     placeholder="What's on your mind?"
                     readOnly
@@ -114,15 +122,17 @@ function InputStatus() {
                             <Dialog.Panel className="bg-background p-6 rounded-lg shadow-lg w-full max-w-3xl mx-auto z-20">
                                 <Dialog.Title className="text-lg font-semibold mb-4">Create Post</Dialog.Title>
                                 <Textarea
-                                    className="mt-3 block w-full resize-none rounded-lg border-none bg-white/5 py-1.5 px-3 text-sm/6 focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25"
+                                    className="mt-3 block w-full max-h-96 resize-none rounded-lg border-none dark:bg-inherit py-1.5 px-3 text-sm/6 focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/0"
                                     value={status}
                                     onChange={handleStatusChange}
                                     placeholder="What's on your mind?"
                                     autoFocus={false}
+                                    ref={textareaRef}
+                                    style={{ height: 'auto' }}
                                 />
                                 <div className="mt-3">
                                     <button onClick={triggerFileInput} className="flex items-center justify-center w-12 h-12 ">
-                                        <Upload className="w-6 h-6 text-gray-600" />
+                                        <Upload className="w-6 h-6 text-white/50" />
                                     </button>
                                     <input
                                         type="file"
