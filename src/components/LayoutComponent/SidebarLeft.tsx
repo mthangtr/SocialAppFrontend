@@ -1,3 +1,5 @@
+"use client";
+import { useEffect, useState } from "react";
 import {
     Avatar,
     AvatarFallback,
@@ -8,17 +10,27 @@ import GroupsIcon from '@mui/icons-material/Groups';
 import FeedIcon from '@mui/icons-material/Feed';
 import SendIcon from '@mui/icons-material/Send';
 import { Button } from "../ui/button";
+import { UserType } from "@/types/Global";
 
 function RightSidebar() {
+    const [user, setUser] = useState<UserType | null>(null);
+
+    useEffect(() => {
+        const storedUser = localStorage.getItem("user");
+        if (storedUser) {
+            setUser(JSON.parse(storedUser));
+        }
+    }, []);
+
     return (
         <aside className="w-full h-full p-4 bg-background">
             <Button variant={"ghost"} className="flex justify-start mb-4 py-7 w-full">
                 <Avatar className="cursor-pointer">
                     <AvatarImage
-                        src="https://github.com/shadcn.png" alt="@shadcn" />
-                    <AvatarFallback>CN</AvatarFallback>
+                        src={`${user?.pfp}`} alt={`${user?.username}`} />
+                    <AvatarFallback>User</AvatarFallback>
                 </Avatar>
-                <h1 className="ml-4 text-xl font-semibold ">Truong Manh Thang</h1>
+                <h1 className="ml-4 text-xl font-semibold ">{user?.username}</h1>
             </Button>
             <nav className="space-y-4">
                 <Button variant={"ghost"} className="flex justify-start px-2 py-6 cursor-pointer w-full">

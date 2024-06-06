@@ -3,7 +3,7 @@ type PostID = string;
 type CommentID = string;
 
 // User Schema
-export interface User {
+export interface UserType {
   username: string;
   email: string;
   password: string;

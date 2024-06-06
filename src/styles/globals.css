@@ -58,18 +58,18 @@ body {
 }
 
 ::-webkit-scrollbar {
-  width: 8px; /* width of the entire scrollbar */
+  width: 5px; /* width of the entire scrollbar */
   height: 8px; /* height of the horizontal scrollbar */
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-background /* color of the tracking area */
+  background: var(--background); /* color of the tracking area */
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: var(--background); /* color of the scroll thumb */
+  background-color: #888; /* color of the scroll thumb */
   border-radius: 10px; /* roundness of the scroll thumb */
-  border: 2px solid var(--border); /* creates padding around scroll thumb */
+  border: 1px solid #888; /* creates padding around scroll thumb */
 }
 
 ::-webkit-scrollbar-thumb:hover {

@@ -5,14 +5,23 @@ import { Input } from "@/components/ui/inputShadcn";
 import { Dialog, Textarea, Transition } from '@headlessui/react';
 import { Button } from "../../ui/button";
 import { Upload } from 'lucide-react';
+import { UserType } from "@/types/Global";
 
 function InputStatus() {
+    const [user, setUser] = useState<UserType | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [status, setStatus] = useState('');
     const [images, setImages] = useState<File[]>([]);
     const [imagePreviews, setImagePreviews] = useState<string[]>([]);
     const fileInputRef = useRef(null);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+    useEffect(() => {
+        const storedUser = localStorage.getItem("user");
+        if (storedUser) {
+            setUser(JSON.parse(storedUser));
+        }
+    }, []);
 
     const handleStatusClick = () => {
         setIsModalOpen(true);
@@ -84,7 +93,7 @@ function InputStatus() {
         <>
             {/* Phần upload status */}
             <div className="border p-4 rounded-lg shadow-lg mb-6 flex items-center " >
-                <Avatar className="mr-4" src="https://github.com/shadcn.png" size="md" />
+                <Avatar className="mr-4" src={`${user?.pfp}`} alt={`${user?.username}`} size="md" />
                 <Input
                     onClick={handleStatusClick}
                     className="w-full border rounded-lg px-4 py-2 cursor-pointer bg-gray-100 dark:bg-[hsl(0,0%,20%)]"
@@ -132,7 +141,7 @@ function InputStatus() {
                                 />
                                 <div className="mt-3">
                                     <button onClick={triggerFileInput} className="flex items-center justify-center w-12 h-12 ">
-                                        <Upload className="w-6 h-6 text-white/50" />
+                                        <Upload className="w-6 h-6 text-gray-400" />
                                     </button>
                                     <input
                                         type="file"

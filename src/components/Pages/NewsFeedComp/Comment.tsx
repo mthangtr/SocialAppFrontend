@@ -12,7 +12,13 @@ function Comment() {
     };
 
     const maxLength = 200;
-    const text = `This is a comment.This is a comment.This is a comment.This is a comment.This is a comment.This is a comment.This is a comment.This is a comment.This is a comment.This is a comment.This is a comment.This is a comment.This is a comment.This is a comment.This is a comment.This is a comment.`;
+    const text = `This is a comment.`;
+
+    useEffect(() => {
+        if (text.length <= maxLength) {
+            setShowFullText(true);
+        }
+    }, [text]);
 
     const displayText = showFullText ? text : text.substring(0, maxLength) + '...';
 
@@ -34,7 +40,7 @@ function Comment() {
                     <p className="font-semibold text-sm">Commenter Name</p>
                     <p className="text-sm text-wrap mt-1">{displayText}
                         <button onClick={toggleShowMore} className="select-none text-sm font-medium hover:underline ml-2 text-gray-500 dark:text-white/50">
-                            {showFullText ? 'Show less' : "Show more"}
+                            {showFullText ? '' : "Show more"}
                         </button>
                     </p>
                     <div className="flex items-center mt-2">

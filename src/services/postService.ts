@@ -12,8 +12,8 @@ export const createPost = async (data: FormData) => {
 };
 
 export const getPosts = async () => {
-  const postData: any = await axios.get<PostType[]>(`${API_URL}/posts`);
-  return postData.data;
+  const response = await axios.get(`${API_URL}/posts`);
+  return response.data as PostType[];
 };
 
 export const deletePost = async (id: string) => {

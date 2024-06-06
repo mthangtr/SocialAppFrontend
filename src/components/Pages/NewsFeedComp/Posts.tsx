@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Avatar } from "@nextui-org/react";
 import { Input } from "@/components/ui/inputShadcn";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -13,6 +13,12 @@ import { TimeAgo } from '@/utils/FormatTime';
 
 export default function Post({ postsData }: { postsData: PostType }) {
     const [showFullText, setShowFullText] = useState(false);
+
+    useEffect(() => {
+        if (postsData.content.length <= maxLength) {
+            setShowFullText(true);
+        }
+    }, [postsData.content.length]);
 
     const toggleShowMore = () => {
         setShowFullText(!showFullText);
@@ -32,6 +38,8 @@ export default function Post({ postsData }: { postsData: PostType }) {
 
     const renderImages = () => {
         switch (images.length) {
+            case 0:
+                return null;
             case 1:
                 return (
                     <Link href={`/post-detail/${postsData._id}`}>
@@ -102,7 +110,7 @@ export default function Post({ postsData }: { postsData: PostType }) {
                 </div>
                 <p className="mb-4">{displayText}
                     <button onClick={toggleShowMore} className="select-none text-sm font-medium hover:underline ml-2 text-gray-500 dark:text-white/50">
-                        {showFullText ? 'Show less' : "Show more"}
+                        {showFullText ? '' : "Show more"}
                     </button>
                 </p>
 
