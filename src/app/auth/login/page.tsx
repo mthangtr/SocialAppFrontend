@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
+import ModeToggle from "@/components/Buttons/ThemeToggle";
 
 function Login() {
     const [formData, setFormData] = useState({
@@ -31,12 +32,14 @@ function Login() {
         }
 
         try {
-            const response = await axios.post("http://localhost:8080/auth/login", formData);
+            const response = await axios.post("http://localhost:8080/auth/login", formData, {
+                withCredentials: true,
+            });
 
             if (response.status === 400) {
                 toast.error(response.data.error);
-                setIsButtonDisabled(false); // Enable the button if there's an error
-                setIsSubmitting(false); // Enable the button if there's an error
+                setIsButtonDisabled(false);
+                setIsSubmitting(false);
                 return;
             }
 
@@ -71,15 +74,18 @@ function Login() {
     };
 
     return (
-        <section className="">
+        <section className="relative">
             <ToastContainer
                 autoClose={3000}
                 hideProgressBar={false}
                 closeOnClick
                 pauseOnHover
             />
+            <span className="absolute m-2">
+                <ModeToggle />
+            </span>
             <div className=" flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-                <div className="bg-gray-100-100 w-full rounded-lg shadow-lg dark:border md:mt-0 sm:max-w-md xl:p-0">
+                <div className="bg-gray-100-100 w-full rounded-lg shadow-lg border md:mt-0 sm:max-w-md xl:p-0">
                     <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
                         <h1 className="text-xl font-bold leading-tight tracking-tight md:text-2xl">
                             Sign in to your account
@@ -128,14 +134,14 @@ function Login() {
                             {isButtonDisabled === false ?
                                 (<button
                                     type="submit"
-                                    className="w-full text-white bg-primary-600 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                                    className="w-full text-white bg-primary-600 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-300 hover:bg-primary-700 dark:hover:bg-primary-200"
                                 >
                                     Sign in
                                 </button>) : (
                                     <button
                                         type="submit"
-                                        className="w-full text-white bg-primary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-                                        disabled={isButtonDisabled}
+                                        className="w-full text-white bg-primary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-500"
+                                        disabled={true}
                                     >
                                         Sign in
                                     </button>

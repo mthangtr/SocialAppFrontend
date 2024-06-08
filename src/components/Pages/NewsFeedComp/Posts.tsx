@@ -10,11 +10,17 @@ import Comment from './Comment';
 import Link from 'next/link';
 import type { PostType } from '@/types/Global';
 import { TimeAgo } from '@/utils/FormatTime';
+import { UserType } from '@/types/Global';
 
 export default function Post({ postsData }: { postsData: PostType }) {
     const [showFullText, setShowFullText] = useState(false);
+    const [user, setUser] = useState<UserType | null>(null);
 
     useEffect(() => {
+        const storedUser = localStorage.getItem("user");
+        if (storedUser) {
+            setUser(JSON.parse(storedUser));
+        }
         if (postsData.content.length <= maxLength) {
             setShowFullText(true);
         }
@@ -143,7 +149,7 @@ export default function Post({ postsData }: { postsData: PostType }) {
                 </div>
 
                 <div className="flex items-center">
-                    <Avatar className="select-none mr-4" src="https://github.com/shadcn.png" size="sm" />
+                    <Avatar className="select-none mr-4" src={`${user?.pfp}`} alt={`${user?.username}`} size="sm" />
                     <Input className="select-none w-full border bg-gray-100 rounded-lg px-4 py-2 dark:bg-[hsl(0,0%,20%)]" type='text' placeholder="Write your comment..." />
                 </div>
             </div>

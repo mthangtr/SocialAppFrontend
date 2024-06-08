@@ -1,7 +1,7 @@
 import axios from "axios";
-import { PostType } from "@/types/Global";
 
 const API_URL = "http://localhost:8080";
+axios.defaults.withCredentials = true;
 
 export const createPost = async (data: FormData) => {
   return axios.post(`${API_URL}/posts`, data, {
@@ -13,7 +13,7 @@ export const createPost = async (data: FormData) => {
 
 export const getPosts = async () => {
   const response = await axios.get(`${API_URL}/posts`);
-  return response.data as PostType[];
+  return response.data;
 };
 
 export const deletePost = async (id: string) => {

@@ -6,6 +6,7 @@ import { Dialog, Textarea, Transition } from '@headlessui/react';
 import { Button } from "../../ui/button";
 import { Upload } from 'lucide-react';
 import { UserType } from "@/types/Global";
+import { createPost } from "@/services/postService";
 
 function InputStatus() {
     const [user, setUser] = useState<UserType | null>(null);
@@ -13,7 +14,7 @@ function InputStatus() {
     const [status, setStatus] = useState('');
     const [images, setImages] = useState<File[]>([]);
     const [imagePreviews, setImagePreviews] = useState<string[]>([]);
-    const fileInputRef = useRef(null);
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
     useEffect(() => {
@@ -31,12 +32,12 @@ function InputStatus() {
         setIsModalOpen(false);
     };
 
-    const handleStatusChange = (e: any) => {
+    const handleStatusChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setStatus(e.target.value);
     };
 
-    const handleImageChange = (e: any) => {
-        const files: File[] = Array.from(e.target.files);
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files: File[] = Array.from(e.target.files || []);
         setImages(files);
 
         const previews: Promise<string>[] = files.map(file => {
@@ -54,45 +55,42 @@ function InputStatus() {
         });
     };
 
-    const handlePostStatus = () => {
+    const handlePostStatus = async () => {
         const formData = new FormData();
-        formData.append('status', status);
+        formData.append('content', status); // change 'status' to 'content'
         images.forEach((image, index) => {
-            formData.append(`image${index}`, image);
+            formData.append(`media`, image); // use the same key 'media' for all files
         });
 
-        // Here you would send formData to your backend
-        // For example: axios.post('/api/status', formData);
+        try {
+            // Gửi FormData tới backend
+            const response = await createPost(formData);
+            console.log('Status posted:', response.data);
 
-        console.log('Status posted:', status);
-        if (images.length > 0) {
-            console.log('Images posted:', images.map(image => image.name));
+            setIsModalOpen(false);
+            setStatus('');
+            setImages([]);
+            setImagePreviews([]);
+        } catch (error) {
+            console.error('Error posting status:', error);
         }
-
-        setIsModalOpen(false);
-        setStatus('');
-        setImages([]);
-        setImagePreviews([]);
     };
 
     const triggerFileInput = () => {
-        if (fileInputRef.current === null) {
-            return;
-        }
-        (fileInputRef.current as HTMLInputElement).click();
+        fileInputRef.current?.click();
     };
 
     useEffect(() => {
         if (textareaRef.current) {
             textareaRef.current.style.height = 'auto';
-            textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px';
+            textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
         }
     }, [status]);
 
     return (
         <>
             {/* Phần upload status */}
-            <div className="border p-4 rounded-lg shadow-lg mb-6 flex items-center " >
+            <div className="border p-4 rounded-lg shadow-lg mb-6 flex items-center">
                 <Avatar className="mr-4" src={`${user?.pfp}`} alt={`${user?.username}`} size="md" />
                 <Input
                     onClick={handleStatusClick}
@@ -140,7 +138,7 @@ function InputStatus() {
                                     style={{ height: 'auto' }}
                                 />
                                 <div className="mt-3">
-                                    <button onClick={triggerFileInput} className="flex items-center justify-center w-12 h-12 ">
+                                    <button onClick={triggerFileInput} className="flex items-center justify-center w-12 h-12">
                                         <Upload className="w-6 h-6 text-gray-400" />
                                     </button>
                                     <input

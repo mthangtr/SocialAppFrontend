@@ -57,23 +57,25 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Base styles for the scrollbar */
 ::-webkit-scrollbar {
-  width: 5px; /* width of the entire scrollbar */
-  height: 8px; /* height of the horizontal scrollbar */
+  width: 5px; /* Initially hidden */
+  height: 8px; /* Initially hidden */
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--background); /* color of the tracking area */
+  background: var(--background); /* Color of the tracking area */
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #888; /* color of the scroll thumb */
-  border-radius: 10px; /* roundness of the scroll thumb */
-  border: 1px solid #888; /* creates padding around scroll thumb */
+  background-color: #888; /* Color of the scroll thumb */
+  border-radius: 10px; /* Roundness of the scroll thumb */
+  border: 1px solid #888;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: #555; /* color of the scroll thumb when hovered or active */
+  background-color: #555; /* Color of the scroll thumb when hovered or active */
+  border: 1px solid #555;
 }
 
 @layer base {

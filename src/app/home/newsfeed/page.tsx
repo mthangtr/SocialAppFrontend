@@ -6,7 +6,7 @@ import { PostType } from '@/types/Global';
 import { useEffect, useState } from 'react';
 
 export default function NewsFeed() {
-    const [posts, setPosts] = useState<PostType[]>([]); // Khởi tạo `posts` như một mảng rỗng
+    const [posts, setPosts] = useState<PostType[]>([]);
 
     useEffect(() => {
         const fetchPosts = async () => {
@@ -24,12 +24,12 @@ export default function NewsFeed() {
     return (
         <div className="container mx-auto p-6">
             <InputStatus />
-            {Array.isArray(posts) && posts.length > 0 ? ( // Kiểm tra nếu `posts` là một mảng và có ít nhất một phần tử
+            {Array.isArray(posts) && posts.length > 0 ? (
                 posts.map((post, idx) => (
                     <Post key={idx} postsData={post} />
                 ))
             ) : (
-                <p>No posts available</p> // Hiển thị thông báo nếu không có bài đăng nào
+                <p>No posts available</p>
             )}
         </div>
     );
