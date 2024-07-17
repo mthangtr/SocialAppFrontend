@@ -6,10 +6,11 @@ import { Dialog, Textarea, Transition } from '@headlessui/react';
 import { Button } from "../../ui/button";
 import { Upload } from 'lucide-react';
 import { UserType } from "@/types/Global";
-import { createPost } from "@/services/postService";
+import {
+    useCreatePostMutation
+} from '@/libs/features/postsSlice';
 
-function InputStatus() {
-    const [user, setUser] = useState<UserType | null>(null);
+function InputStatus({ user }: { user: UserType }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [status, setStatus] = useState('');
     const [images, setImages] = useState<File[]>([]);
@@ -17,12 +18,7 @@ function InputStatus() {
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-    useEffect(() => {
-        const storedUser = localStorage.getItem("user");
-        if (storedUser) {
-            setUser(JSON.parse(storedUser));
-        }
-    }, []);
+    const [createPost, { isLoading, isSuccess, isError, error }] = useCreatePostMutation();
 
     const handleStatusClick = () => {
         setIsModalOpen(true);
@@ -64,9 +60,8 @@ function InputStatus() {
 
         try {
             // Gửi FormData tới backend
-            const response = await createPost(formData);
-            console.log('Status posted:', response.data);
-
+            const response = await createPost(formData).unwrap();
+            console.log('Status posted:', response);
             setIsModalOpen(false);
             setStatus('');
             setImages([]);
@@ -90,7 +85,7 @@ function InputStatus() {
     return (
         <>
             {/* Phần upload status */}
-            <div className="border p-4 rounded-lg shadow-lg mb-6 flex items-center">
+            <div className="border p-4 rounded-lg shadow-lg flex items-center">
                 <Avatar className="mr-4" src={`${user?.pfp}`} alt={`${user?.username}`} size="md" />
                 <Input
                     onClick={handleStatusClick}

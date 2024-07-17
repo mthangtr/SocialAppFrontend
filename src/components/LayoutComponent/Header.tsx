@@ -1,5 +1,5 @@
-"use client"
-import { useState, useEffect } from "react";
+"use client";
+import { useAppSelector, useAppDispatch } from "@/libs/hooks";
 import {
     Menubar,
     MenubarContent,
@@ -8,27 +8,29 @@ import {
     MenubarSeparator,
     MenubarShortcut,
     MenubarTrigger,
-} from "@/components/ui/menubar"
+} from "@/components/ui/menubar";
 import {
     Avatar,
     AvatarFallback,
     AvatarImage,
-} from "@/components/ui/avatar"
+} from "@/components/ui/avatar";
 import { Button } from "../ui/button";
-import { Input } from "@/components/ui/inputShadcn"
+import { Input } from "@/components/ui/inputShadcn";
 import SendIcon from '@mui/icons-material/Send';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import ModeToggle from "@/components/Buttons/ThemeToggle";
 import { LogOut } from 'lucide-react';
 import axios from "axios";
+import { logout } from "@/libs/features/authSlice";
 import { UserType } from "@/types/Global";
 
-async function handleLogOut() {
+async function handleLogOut(dispatch) {
     try {
         const response = await axios.post("http://localhost:8080/auth/logout");
         if (response.status === 200) {
             localStorage.removeItem("sessionToken");
             localStorage.removeItem("user");
+            dispatch(logout()); // Dispatch the logout action
             window.location.href = "/auth/login";
         }
     } catch (error) {
@@ -37,14 +39,8 @@ async function handleLogOut() {
 }
 
 function Header() {
-    const [user, setUser] = useState<UserType | null>(null);
-
-    useEffect(() => {
-        const storedUser = localStorage.getItem("user");
-        if (storedUser) {
-            setUser(JSON.parse(storedUser));
-        }
-    }, []);
+    const user: UserType = useAppSelector((state) => (state as { auth: { userInfo: UserType } }).auth.userInfo);
+    const dispatch = useAppDispatch();
 
     return (
         <header className="bg-background px-4 py-2 border-b-2 shadow-md fixed top-0 z-10 w-full">
@@ -72,12 +68,14 @@ function Header() {
                             <MenubarSeparator />
                             <MenubarItem>Share</MenubarItem>
                             <MenubarSeparator />
-                            <MenubarItem onClick={handleLogOut} className="flex justify-between items-center">Log out<LogOut size={16} /></MenubarItem>
+                            <MenubarItem onClick={() => handleLogOut(dispatch)} className="flex justify-between items-center">
+                                Log out<LogOut size={16} />
+                            </MenubarItem>
                         </MenubarContent>
                     </MenubarMenu>
                 </div>
             </Menubar>
-        </header >
+        </header>
     );
 }
 

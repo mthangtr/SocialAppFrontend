@@ -11,16 +11,12 @@ import Link from 'next/link';
 import type { PostType } from '@/types/Global';
 import { TimeAgo } from '@/utils/FormatTime';
 import { UserType } from '@/types/Global';
+import PostTextContent from './PostTextContent';
 
-export default function Post({ postsData }: { postsData: PostType }) {
+export default function Post({ postsData, user }: { postsData: PostType, user: UserType }) {
     const [showFullText, setShowFullText] = useState(false);
-    const [user, setUser] = useState<UserType | null>(null);
 
     useEffect(() => {
-        const storedUser = localStorage.getItem("user");
-        if (storedUser) {
-            setUser(JSON.parse(storedUser));
-        }
         if (postsData.content.length <= maxLength) {
             setShowFullText(true);
         }
@@ -114,13 +110,13 @@ export default function Post({ postsData }: { postsData: PostType }) {
                         <p className="text-gray-500 text-sm dark:text-white/50 select-none">{TimeAgo(postsData.createdAt.toString())}</p>
                     </div>
                 </div>
-                <p className="mb-4">{displayText}
+                <p className="">{<PostTextContent text={displayText} />}
                     <button onClick={toggleShowMore} className="select-none text-sm font-medium hover:underline ml-2 text-gray-500 dark:text-white/50">
                         {showFullText ? '' : "Show more"}
                     </button>
                 </p>
 
-                <div>
+                <div className='mt-4'>
                     {renderImages()}
                 </div>
 

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/ui/ThemeProvider";
 import "@/styles/globals.css";
+import StoreProvider from "./StoreProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,17 +18,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem={true}
-          themes={['dark', 'light']}
-          storageKey="theme"
-          disableTransitionOnChange={true}
-        >
-          {children}
-        </ThemeProvider>
+      <body className={`${inter.className} bodyScroll overflow-y-scroll`} suppressHydrationWarning={true}>
+        <StoreProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem={true}
+            themes={['dark', 'light']}
+            storageKey="theme"
+            disableTransitionOnChange={true}
+          >
+            {children}
+          </ThemeProvider>
+        </StoreProvider>
       </body>
     </html>
   );

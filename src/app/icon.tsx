@@ -10,7 +10,7 @@ export default function Icon() {
         <div style={{ width: size.width, height: size.height }}>
             <img
                 src="/icon.svg"
-                className="bg-black w-full h-full flex justify-center items-center text-white"
+                className="w-full h-full flex justify-center items-center text-white"
                 alt="Icon"
             />
         </div>

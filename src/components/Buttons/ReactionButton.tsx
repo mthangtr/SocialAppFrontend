@@ -7,7 +7,7 @@ import 'tippy.js/animations/shift-away.css';
 import 'tippy.js/themes/material.css';
 
 const reactions = [
-    { emoji: '👍', label: 'Like', color: '#1877f2' },
+    { emoji: <ThumbsUp fill='#1877f2' strokeWidth={1} size={"18px"} className='mr-1' stroke='#0f5cb5' />, label: 'Like', color: '#1877f2' },
     { emoji: '❤️', label: 'Love', color: '#e0245e' },
     { emoji: '😂', label: 'Haha', color: '#f7b928' },
     { emoji: '😮', label: 'Wow', color: '#f7b928' },

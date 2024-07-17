@@ -1,10 +1,10 @@
-export function FormatTime(time: string) {
+export function FormatTime(time) {
   const date = new Date(time);
-  const options: any = { year: "numeric", month: "long", day: "numeric" };
+  const options = { year: "numeric", month: "long", day: "numeric" };
   return date.toLocaleDateString("en-US", options);
 }
 
-export function TimeAgo(time: string) {
+export function TimeAgo(time) {
   const date = new Date(time);
   const now = new Date();
   const diff = Math.abs(now.getTime() - date.getTime());

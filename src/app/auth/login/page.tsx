@@ -1,11 +1,13 @@
 "use client";
-import { Input } from "@/components/ui/inputShadcn";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
 import ModeToggle from "@/components/Buttons/ThemeToggle";
+import { useAppDispatch } from "@/libs/hooks";
+import { setCredentials } from "@/libs/features/authSlice";
+import { Input } from "@/components/ui/inputShadcn";
 
 function Login() {
     const [formData, setFormData] = useState({
@@ -15,12 +17,13 @@ function Login() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isButtonDisabled, setIsButtonDisabled] = useState(false);
     const router = useRouter();
+    const dispatch = useAppDispatch();
 
     const handleSubmit = async (event: any) => {
         event.preventDefault();
         if (isSubmitting) return;
         setIsSubmitting(true);
-        setIsButtonDisabled(true); // Disable the button
+        setIsButtonDisabled(true);
 
         if (!formData.email || !formData.password) {
             toast.warn("Please fill in all fields");
@@ -47,8 +50,7 @@ function Login() {
             const sessionToken = user.authentication.sessionToken;
 
             if (sessionToken) {
-                localStorage.setItem("sessionToken", sessionToken);
-                localStorage.setItem("user", JSON.stringify(user));
+                dispatch(setCredentials(user));
                 router.push("/home/newsfeed");
             } else {
                 toast.error("Invalid login response");
