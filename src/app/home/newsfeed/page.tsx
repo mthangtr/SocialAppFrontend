@@ -18,8 +18,6 @@ export default function NewsFeed() {
 
     const { data: postData, error, isLoading, isFetching } = useFetchPostsQuery({ page });
 
-    console.log(posts.length);
-
     useEffect(() => {
         const storedUser = localStorage.getItem("userInfo");
         if (storedUser) {

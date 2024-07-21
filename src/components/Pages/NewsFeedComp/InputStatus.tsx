@@ -60,8 +60,7 @@ function InputStatus({ user }: { user: UserType }) {
 
         try {
             // Gửi FormData tới backend
-            const response = await createPost(formData).unwrap();
-            console.log('Status posted:', response);
+            createPost(formData).unwrap();
             setIsModalOpen(false);
             setStatus('');
             setImages([]);

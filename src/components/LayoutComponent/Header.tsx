@@ -20,19 +20,20 @@ import SendIcon from '@mui/icons-material/Send';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import ModeToggle from "@/components/Buttons/ThemeToggle";
 import { LogOut } from 'lucide-react';
-import axios from "axios";
-import { logout } from "@/libs/features/authSlice";
 import { UserType } from "@/types/Global";
+import {
+    logout,
+} from "@/libs/features/authSlice";
 
 async function handleLogOut(dispatch) {
     try {
-        const response = await axios.post("http://localhost:8080/auth/logout");
-        if (response.status === 200) {
-            localStorage.removeItem("sessionToken");
-            localStorage.removeItem("user");
-            dispatch(logout()); // Dispatch the logout action
-            window.location.href = "/auth/login";
-        }
+        // const response = await axios.post("http://localhost:8080/auth/logout");
+        // if (response.status === 200) {
+        //     localStorage.removeItem("sessionToken");
+        //     localStorage.removeItem("user");
+        //     dispatch(logout()); // Dispatch the logout action
+        //     window.location.href = "/auth/login";
+        // }
     } catch (error) {
         console.error("Logout error:", error);
     }

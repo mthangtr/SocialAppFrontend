@@ -20,10 +20,19 @@ export const postsSlice = apiSlice.injectEndpoints({
             }),
             invalidatesTags: ["Post"],
         }),
+        reactToPost: builder.mutation({
+            query: ({ postId, reaction }) => ({
+                url: `${POST_URL}/${postId}/react`,
+                method: 'POST',
+                body: { reaction },
+            }),
+            invalidatesTags: ["Post"],
+        }),
     }),
 });
 
 export const {
     useFetchPostsQuery,
     useCreatePostMutation,
+    useReactToPostMutation,
 } = postsSlice;

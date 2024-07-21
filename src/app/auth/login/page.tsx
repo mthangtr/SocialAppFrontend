@@ -3,11 +3,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import axios from "axios";
 import ModeToggle from "@/components/Buttons/ThemeToggle";
 import { useAppDispatch } from "@/libs/hooks";
 import { setCredentials } from "@/libs/features/authSlice";
 import { Input } from "@/components/ui/inputShadcn";
+import { useLoginMutation } from "@/libs/features/logresSlice";
 
 function Login() {
     const [formData, setFormData] = useState({
@@ -18,6 +18,7 @@ function Login() {
     const [isButtonDisabled, setIsButtonDisabled] = useState(false);
     const router = useRouter();
     const dispatch = useAppDispatch();
+    const [login, { isLoading }] = useLoginMutation();
 
     const handleSubmit = async (event: any) => {
         event.preventDefault();
@@ -35,9 +36,8 @@ function Login() {
         }
 
         try {
-            const response = await axios.post("http://localhost:8080/auth/login", formData, {
-                withCredentials: true,
-            });
+            const response = await login(formData).unwrap();
+            console.log("Response:", response);
 
             if (response.status === 400) {
                 toast.error(response.data.error);
@@ -46,7 +46,7 @@ function Login() {
                 return;
             }
 
-            const user = response.data;
+            const user = response;
             const sessionToken = user.authentication.sessionToken;
 
             if (sessionToken) {

@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '../ui/button';
 import Tippy from '@tippyjs/react';
 import { ThumbsUp } from 'lucide-react';
 import 'tippy.js/dist/tippy.css';
 import 'tippy.js/animations/shift-away.css';
 import 'tippy.js/themes/material.css';
+import { PostType, UserType } from '@/types/Global';
 
 const reactions = [
     { emoji: <ThumbsUp fill='#1877f2' strokeWidth={1} size={"18px"} className='mr-1' stroke='#0f5cb5' />, label: 'Like', color: '#1877f2' },
@@ -15,13 +16,20 @@ const reactions = [
     { emoji: '😡', label: 'Angry', color: '#d93f33' },
 ];
 
-const ReactionButton = ({ onReact }: { onReact: (reaction: string) => void }) => {
+const ReactionButton = ({ post, onReact, user }: { post: PostType, onReact: (reaction: string) => void, user: UserType }) => {
     const [selectedReaction, setSelectedReaction] = useState<string | null>(null);
+
+    useEffect(() => {
+        const userReaction = post.reactions.find(r => r.user._id === user._id);
+        if (userReaction) {
+            setSelectedReaction(userReaction.type);
+        }
+    }, [post.reactions, user._id]);
 
     const handleReaction = (reaction: string) => {
         if (selectedReaction === reaction) {
             setSelectedReaction(null);
-            onReact('Like');
+            onReact('none');
         } else {
             setSelectedReaction(reaction);
             onReact(reaction);
@@ -36,7 +44,7 @@ const ReactionButton = ({ onReact }: { onReact: (reaction: string) => void }) =>
     const handleButtonClick = () => {
         if (selectedReaction) {
             setSelectedReaction(null);
-            onReact('Like');
+            onReact('none');
         } else {
             setSelectedReaction('Like');
             onReact('Like');
@@ -62,7 +70,9 @@ const ReactionButton = ({ onReact }: { onReact: (reaction: string) => void }) =>
                                 className="text-3xl"
                                 aria-label={reaction.label}
                             >
-                                {reaction.emoji}
+                                {reaction.label === 'Like'
+                                    ? <ThumbsUp fill='#1877f2' strokeWidth={1} size={"32px"} className='mr-1' stroke='#0f5cb5' />
+                                    : reaction.emoji}
                             </button>
                         ))
                     }

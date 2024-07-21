@@ -12,9 +12,11 @@ import type { PostType } from '@/types/Global';
 import { TimeAgo } from '@/utils/FormatTime';
 import { UserType } from '@/types/Global';
 import PostTextContent from './PostTextContent';
+import { useReactToPostMutation } from '@/libs/features/postsSlice'
 
 export default function Post({ postsData, user }: { postsData: PostType, user: UserType }) {
     const [showFullText, setShowFullText] = useState(false);
+    const [reactToPost] = useReactToPostMutation();
 
     useEffect(() => {
         if (postsData.content.length <= maxLength) {
@@ -31,9 +33,12 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
     const maxLength = 300;
     const displayText = showFullText ? text : text.substring(0, maxLength) + '...';
 
-    const handleReaction = (reaction: any) => {
-        console.log(`Reacted with: ${reaction}`);
-        // Perform necessary actions when the user reacts
+    const handleReaction = async (reaction: any) => {
+        try {
+            const response = await reactToPost({ postId: postsData._id, reaction }).unwrap();
+        } catch (error) {
+            console.error('Error updating reaction:', error);
+        }
     };
 
     const images = postsData.media;
@@ -125,7 +130,7 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
                 </div>
 
                 <div className="w-full border-y py-2 mb-4 flex justify-around items-center">
-                    <ReactionButton onReact={handleReaction} /> {/* Use ReactionButton */}
+                    <ReactionButton post={postsData} onReact={handleReaction} user={user} /> {/* Use ReactionButton */}
                     <Button variant={"ghost"}>
                         <FontAwesomeIcon icon={faMessage} />
                         <span className="ml-2 select-none">Comment</span>
