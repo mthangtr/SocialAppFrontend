@@ -8,6 +8,7 @@ import { useAppDispatch } from "@/libs/hooks";
 import { setCredentials } from "@/libs/features/authSlice";
 import { Input } from "@/components/ui/inputShadcn";
 import { useLoginMutation } from "@/libs/features/logresSlice";
+import { Spinner } from '@nextui-org/react';
 
 function Login() {
     const [formData, setFormData] = useState({
@@ -87,7 +88,12 @@ function Login() {
                 <ModeToggle />
             </span>
             <div className=" flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-                <div className="bg-gray-100-100 w-full rounded-lg shadow-lg border md:mt-0 sm:max-w-md xl:p-0">
+                <div className={` bg-gray-100-100 w-full rounded-lg shadow-lg border md:mt-0 sm:max-w-md xl:p-0`}>
+                    {isButtonDisabled && (
+                        <div className="absolute rounded-md inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+                            <Spinner /> {/* Display the Spinner */}
+                        </div>
+                    )}
                     <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
                         <h1 className="text-xl font-bold leading-tight tracking-tight md:text-2xl">
                             Sign in to your account
@@ -95,27 +101,53 @@ function Login() {
                         <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
                             <div>
                                 <label htmlFor="email" className="block mb-2 text-sm font-medium">Your email</label>
-                                <Input
-                                    type="email"
-                                    name="email"
-                                    id="email"
-                                    className="select-none w-full border bg-gray-100 rounded-lg px-4 py-2 dark:bg-[hsl(0,0%,20%)]"
-                                    placeholder="name@company.com"
-                                    value={formData.email}
-                                    onChange={handleChange}
-                                />
+                                {isButtonDisabled === false ? (
+                                    <Input
+                                        type="email"
+                                        name="email"
+                                        id="email"
+                                        className="select-none w-full border bg-gray-100 rounded-lg px-4 py-2 dark:bg-[hsl(0,0%,20%)]"
+                                        placeholder="name@company.com"
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                    />
+                                ) : (
+                                    <Input
+                                        type="email"
+                                        name="email"
+                                        id="email"
+                                        className="select-none w-full border bg-gray-100 rounded-lg px-4 py-2 dark:bg-[hsl(0,0%,20%)]"
+                                        placeholder="name@company.com"
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                        disabled={true}
+                                    />
+                                )}
                             </div>
                             <div>
                                 <label htmlFor="password" className="block mb-2 text-sm font-medium">Password</label>
-                                <Input
-                                    type="password"
-                                    name="password"
-                                    id="password"
-                                    placeholder="••••••••"
-                                    className="select-none w-full border bg-gray-100 rounded-lg px-4 py-2 dark:bg-[hsl(0,0%,20%)]"
-                                    value={formData.password}
-                                    onChange={handleChange}
-                                />
+                                {isButtonDisabled === false ? (
+                                    <Input
+                                        type="password"
+                                        name="password"
+                                        id="password"
+                                        placeholder="••••••••"
+                                        className="select-none w-full border bg-gray-100 rounded-lg px-4 py-2 dark:bg-[hsl(0,0%,20%)]"
+                                        value={formData.password}
+                                        onChange={handleChange}
+                                    />
+                                ) : (
+                                    <Input
+                                        type="password"
+                                        name="password"
+                                        id="password"
+                                        placeholder="••••••••"
+                                        className="select-none w-full border bg-gray-100 rounded-lg px-4 py-2 dark:bg-[hsl(0,0%,20%)]"
+                                        value={formData.password}
+                                        onChange={handleChange}
+                                        disabled={true}
+                                    />
+                                )}
                             </div>
                             <div className="flex items-center justify-between">
                                 <div className="flex items-start">
@@ -142,7 +174,7 @@ function Login() {
                                 </button>) : (
                                     <button
                                         type="submit"
-                                        className="w-full text-white bg-primary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-500"
+                                        className="w-full text-white bg-primary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                                         disabled={true}
                                     >
                                         Sign in
