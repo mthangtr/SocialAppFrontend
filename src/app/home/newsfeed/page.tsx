@@ -9,16 +9,26 @@ import { UserType } from '@/types/Global';
 import {
     useFetchPostsQuery
 } from '@/libs/features/postsSlice';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { ToastContainer, toast } from 'react-toastify';
+
 
 export default function NewsFeed() {
     const [posts, setPosts] = useState<PostType[]>([]);
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
     const [user, setUser] = useState<UserType | null>(null);
+    const searchParams = useSearchParams();
+    const query = searchParams.get('loggedIn');
+    const router = useRouter();
 
     const { data: postData, error, isLoading, isFetching } = useFetchPostsQuery({ page });
 
     useEffect(() => {
+        if (query === 'true') {
+            toast.success("Logged out successfully");
+            router.replace("/home/newsfeed", undefined);
+        }
         const storedUser = localStorage.getItem("userInfo");
         if (storedUser) {
             setUser(JSON.parse(storedUser));
@@ -45,6 +55,12 @@ export default function NewsFeed() {
 
     return (
         <div className="container mx-auto p-6">
+            <ToastContainer
+                autoClose={3000}
+                hideProgressBar={true}
+                closeOnClick
+                pauseOnHover
+            />
             <InputStatus user={user} />
             <InfiniteScroll
                 style={{ overflow: 'visible' }}

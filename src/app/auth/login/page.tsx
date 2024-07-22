@@ -1,13 +1,13 @@
 "use client";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ModeToggle from "@/components/Buttons/ThemeToggle";
 import { useAppDispatch } from "@/libs/hooks";
-import { setCredentials } from "@/libs/features/authSlice";
+import { setCredentials } from "@/libs/features/auth/authSlice";
 import { Input } from "@/components/ui/inputShadcn";
-import { useLoginMutation } from "@/libs/features/logresSlice";
+import { useLoginMutation } from "@/libs/features/auth/logresSlice";
 import { Spinner } from '@nextui-org/react';
 
 function Login() {
@@ -20,6 +20,15 @@ function Login() {
     const router = useRouter();
     const dispatch = useAppDispatch();
     const [login, { isLoading }] = useLoginMutation();
+    const searchParams = useSearchParams();
+    const query = searchParams.get('loggedOut');
+
+    useEffect(() => {
+        if (query === 'true') {
+            toast.success("Logged out successfully");
+            router.replace("/auth/login", undefined);
+        }
+    }, [router]);
 
     const handleSubmit = async (event: any) => {
         event.preventDefault();
@@ -38,7 +47,6 @@ function Login() {
 
         try {
             const response = await login(formData).unwrap();
-            console.log("Response:", response);
 
             if (response.status === 400) {
                 toast.error(response.data.error);
@@ -52,7 +60,7 @@ function Login() {
 
             if (sessionToken) {
                 dispatch(setCredentials(user));
-                router.push("/home/newsfeed");
+                router.push("/home/newsfeed?loggedIn=true");
             } else {
                 toast.error("Invalid login response");
                 setIsButtonDisabled(false);
@@ -80,7 +88,7 @@ function Login() {
         <section className="relative">
             <ToastContainer
                 autoClose={3000}
-                hideProgressBar={false}
+                hideProgressBar={true}
                 closeOnClick
                 pauseOnHover
             />
@@ -89,7 +97,7 @@ function Login() {
             </span>
             <div className=" flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
                 <div className={` bg-gray-100-100 w-full rounded-lg shadow-lg border md:mt-0 sm:max-w-md xl:p-0`}>
-                    {isButtonDisabled && (
+                    {isLoading && (
                         <div className="absolute rounded-md inset-0 bg-black bg-opacity-50 flex justify-center items-center">
                             <Spinner /> {/* Display the Spinner */}
                         </div>

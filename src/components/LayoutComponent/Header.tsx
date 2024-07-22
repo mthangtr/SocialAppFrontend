@@ -22,26 +22,23 @@ import ModeToggle from "@/components/Buttons/ThemeToggle";
 import { LogOut } from 'lucide-react';
 import { UserType } from "@/types/Global";
 import {
-    logout,
-} from "@/libs/features/authSlice";
-
-async function handleLogOut(dispatch) {
-    try {
-        // const response = await axios.post("http://localhost:8080/auth/logout");
-        // if (response.status === 200) {
-        //     localStorage.removeItem("sessionToken");
-        //     localStorage.removeItem("user");
-        //     dispatch(logout()); // Dispatch the logout action
-        //     window.location.href = "/auth/login";
-        // }
-    } catch (error) {
-        console.error("Logout error:", error);
-    }
-}
+    useLogoutMutation,
+} from "@/libs/features/auth/logresSlice";
+import { useRouter } from "next/navigation";
 
 function Header() {
     const user: UserType = useAppSelector((state) => (state as { auth: { userInfo: UserType } }).auth.userInfo);
-    const dispatch = useAppDispatch();
+    const [logout, { isLoading, isSuccess, isError, error }] = useLogoutMutation();
+    const router = useRouter();
+
+    const handleLogOut = async () => {
+        try {
+            await logout({}).unwrap();
+            router.push("/auth/login?loggedOut=true");
+        } catch (error) {
+            console.error("Logout error:", error);
+        }
+    };
 
     return (
         <header className="bg-background px-4 py-2 border-b-2 shadow-md fixed top-0 z-10 w-full">
@@ -69,7 +66,7 @@ function Header() {
                             <MenubarSeparator />
                             <MenubarItem>Share</MenubarItem>
                             <MenubarSeparator />
-                            <MenubarItem onClick={() => handleLogOut(dispatch)} className="flex justify-between items-center">
+                            <MenubarItem onClick={() => handleLogOut()} className="flex justify-between items-center">
                                 Log out<LogOut size={16} />
                             </MenubarItem>
                         </MenubarContent>
