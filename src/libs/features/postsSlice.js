@@ -26,7 +26,7 @@ export const postsSlice = apiSlice.injectEndpoints({
                 method: 'POST',
                 body: { reaction },
             }),
-            invalidatesTags: ["Post"],
+            providesTags: ["Post"],
         }),
     }),
 });

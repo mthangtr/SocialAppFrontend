@@ -9,6 +9,9 @@ export function TimeAgo(time) {
   const now = new Date();
   const diff = Math.abs(now.getTime() - date.getTime());
   const minutes = Math.floor(diff / 60000);
+  if (minutes < 1) {
+    return "Just now";
+  }
   if (minutes < 60) {
     return `${minutes}m ago`;
   }

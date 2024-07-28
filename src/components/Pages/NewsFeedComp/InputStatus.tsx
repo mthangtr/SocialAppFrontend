@@ -10,7 +10,7 @@ import {
     useCreatePostMutation
 } from '@/libs/features/postsSlice';
 
-function InputStatus({ user }: { user: UserType }) {
+function InputStatus({ user, onPostCreated }: { user: UserType, onPostCreated: (post: any) => void }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [status, setStatus] = useState('');
     const [images, setImages] = useState<File[]>([]);
@@ -18,7 +18,7 @@ function InputStatus({ user }: { user: UserType }) {
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-    const [createPost, { isLoading, isSuccess, isError, error }] = useCreatePostMutation();
+    const [createPost, { data: newPost, isLoading, isSuccess, isError, error }] = useCreatePostMutation();
 
     const handleStatusClick = () => {
         setIsModalOpen(true);
@@ -59,8 +59,10 @@ function InputStatus({ user }: { user: UserType }) {
         });
 
         try {
-            // Gửi FormData tới backend
             createPost(formData).unwrap();
+            if (isSuccess && newPost) {
+                onPostCreated(newPost);
+            }
             setIsModalOpen(false);
             setStatus('');
             setImages([]);

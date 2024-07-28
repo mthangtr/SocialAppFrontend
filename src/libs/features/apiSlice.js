@@ -10,15 +10,6 @@ const baseQuery = fetchBaseQuery({
     }
 });
 
-const baseQueryWithFormData = async (args, api, extraOptions) => {
-    const { body, headers } = args;
-    if (body instanceof FormData) {
-        // Let the browser set the Content-Type including the boundary
-        delete headers['Content-Type'];
-    }
-    return baseQuery(args, api, extraOptions);
-};
-
 export const apiSlice = createApi({
     baseQuery,
     tagTypes: [

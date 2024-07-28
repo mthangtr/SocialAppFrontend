@@ -12,7 +12,6 @@ import {
 import { useSearchParams, useRouter } from 'next/navigation';
 import { ToastContainer, toast } from 'react-toastify';
 
-
 export default function NewsFeed() {
     const [posts, setPosts] = useState<PostType[]>([]);
     const [page, setPage] = useState(1);
@@ -49,6 +48,10 @@ export default function NewsFeed() {
         }
     };
 
+    const handlePostCreated = (newPost: PostType) => {
+        setPosts(prevPosts => [newPost, ...prevPosts]);
+    };
+
     if (error) {
         return <div>Error loading posts</div>;
     }
@@ -61,7 +64,7 @@ export default function NewsFeed() {
                 closeOnClick
                 pauseOnHover
             />
-            <InputStatus user={user} />
+            <InputStatus user={user} onPostCreated={handlePostCreated} />
             <InfiniteScroll
                 style={{ overflow: 'visible' }}
                 dataLength={posts.length}
