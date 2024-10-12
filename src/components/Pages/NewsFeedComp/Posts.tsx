@@ -31,7 +31,7 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
     const text = postsData?.content;
 
     const maxLength = 300;
-    const displayText = showFullText ? text : text.substring(0, maxLength) + '...';
+    const displayText = showFullText ? text : text?.substring(0, maxLength) + '...';
 
     const handleReaction = async (reaction: any) => {
         try {
@@ -113,7 +113,7 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
         <>
             <div className="mt-8 border p-6 rounded-lg shadow-lg bg-background">
                 <div className="flex items-center mb-4">
-                    <Avatar className="mr-4 select-none" src={`${postsData?.user?.pfp.toString()}`} size="md" />
+                    <Avatar className="mr-4 select-none" src={`${postsData?.user?.pfp?.toString()}`} size="md" />
                     <div>
                         <p className="font-semibold text-lg">{postsData?.user?.username}</p>
                         <p className="text-gray-500 text-sm dark:text-white/50 select-none">{TimeAgo(postsData?.createdAt?.toString())}</p>

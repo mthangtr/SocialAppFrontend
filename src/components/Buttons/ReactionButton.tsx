@@ -20,7 +20,7 @@ const ReactionButton = ({ post, onReact, user }: { post: PostType, onReact: (rea
     const [selectedReaction, setSelectedReaction] = useState<string | null>(null);
 
     useEffect(() => {
-        const userReaction = post.reactions.find(r => r.user._id === user._id);
+        const userReaction = post?.reactions?.find(r => r.user._id === user._id);
         if (userReaction) {
             setSelectedReaction(userReaction.type);
         }
@@ -37,8 +37,8 @@ const ReactionButton = ({ post, onReact, user }: { post: PostType, onReact: (rea
     };
 
     const getReaction = () => {
-        const reaction = reactions.find(r => r.label === selectedReaction);
-        return reaction ? { emoji: reaction.emoji, color: reaction.color } : { emoji: <ThumbsUp className='mr-1' size={"18px"} />, color: '' };
+        const reaction = reactions?.find(r => r?.label === selectedReaction);
+        return reaction ? { emoji: reaction?.emoji, color: reaction?.color } : { emoji: <ThumbsUp className='mr-1' size={"18px"} />, color: '' };
     };
 
     const handleButtonClick = () => {
@@ -83,7 +83,7 @@ const ReactionButton = ({ post, onReact, user }: { post: PostType, onReact: (rea
         >
             <Button variant={"ghost"} className="flex items-center px-2 w-24 justify-center select-none" onClick={handleButtonClick}>
                 {typeof emoji === 'string' ? <span className='text-2xl'>{emoji}</span> : emoji}
-                <span className="ml-1" style={{ color: color }}>{selectedReaction ? selectedReaction : 'Like'}</span>
+                <span className="ml-1" style={{ color: color }}>{selectedReaction ? selectedReaction : 'None'}</span>
             </Button>
         </Tippy >
     );

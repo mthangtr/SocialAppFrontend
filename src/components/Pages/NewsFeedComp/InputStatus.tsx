@@ -9,6 +9,7 @@ import { UserType } from "@/types/Global";
 import {
     useCreatePostMutation
 } from '@/libs/features/postsSlice';
+import { ToastContainer, toast } from 'react-toastify';
 
 function InputStatus({ user, onPostCreated }: { user: UserType, onPostCreated: (post: any) => void }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -18,7 +19,7 @@ function InputStatus({ user, onPostCreated }: { user: UserType, onPostCreated: (
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-    const [createPost, { data: newPost, isLoading, isSuccess, isError, error }] = useCreatePostMutation();
+    const [createPost, { isLoading, isSuccess, isError, error }] = useCreatePostMutation();
 
     const handleStatusClick = () => {
         setIsModalOpen(true);
@@ -59,9 +60,10 @@ function InputStatus({ user, onPostCreated }: { user: UserType, onPostCreated: (
         });
 
         try {
-            createPost(formData).unwrap();
-            if (isSuccess && newPost) {
-                onPostCreated(newPost);
+            const response = await createPost(formData).unwrap();
+            console.log('Post created:', response);
+            if (response) {
+                onPostCreated(response);
             }
             setIsModalOpen(false);
             setStatus('');

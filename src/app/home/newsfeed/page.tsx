@@ -10,10 +10,12 @@ import {
     useFetchPostsQuery
 } from '@/libs/features/postsSlice';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
+import NewPostContainer from '@/components/Pages/NewsFeedComp/NewPostContainer';
 
 export default function NewsFeed() {
     const [posts, setPosts] = useState<PostType[]>([]);
+    const [newPost, setNewPost] = useState<PostType[]>([]);
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
     const [user, setUser] = useState<UserType | null>(null);
@@ -49,7 +51,10 @@ export default function NewsFeed() {
     };
 
     const handlePostCreated = (newPost: PostType) => {
-        setPosts(prevPosts => [newPost, ...prevPosts]);
+        toast.success("Post created successfully");
+        const audio = new Audio('/assets/sounds/new-notification.mp3');
+        audio.play().catch((error) => console.log('Error playing sound:', error));
+        setNewPost(prevPosts => [newPost, ...prevPosts]);
     };
 
     if (error) {
@@ -58,20 +63,18 @@ export default function NewsFeed() {
 
     return (
         <div className="container mx-auto p-6">
-            <ToastContainer
-                autoClose={3000}
-                hideProgressBar={true}
-                closeOnClick
-                pauseOnHover
-            />
             <InputStatus user={user} onPostCreated={handlePostCreated} />
+            <NewPostContainer
+                user={user}
+                postsData={newPost}
+            ></NewPostContainer>
             <InfiniteScroll
                 style={{ overflow: 'visible' }}
                 dataLength={posts.length}
                 next={loadMorePosts}
                 hasMore={hasMore}
                 loader={<div className='flex justify-center items-center mt-2 pt-2'><Spinner /></div>}
-                endMessage={<div className='flex justify-center items-center mt-2 pt-2'><h1>No more posts to show</h1></div>}
+                endMessage={<div className='flex justify-center items-center mt-2 pt-2'><h1>No more content</h1></div>}
             >
                 {posts.map((post, idx) => (
                     <Post key={idx} postsData={post} user={user} />

@@ -3,6 +3,9 @@ import RightSidebar from "@/components/LayoutComponent/SidebarRight";
 import LeftSidebar from "@/components/LayoutComponent/SidebarLeft";
 import ScrollableComponent from "@/components/LayoutComponent/ScrollableComponent";
 import Providers from "@/components/LayoutComponent/ProgressBarProvider";
+import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+
 
 function HomeLayout({ children }: { children: React.ReactNode }) {
     return (
@@ -10,6 +13,12 @@ function HomeLayout({ children }: { children: React.ReactNode }) {
             <main className="">
                 <Header />
                 <div className="flex">
+                    <ToastContainer
+                        autoClose={3000}
+                        hideProgressBar={true}
+                        closeOnClick
+                        pauseOnHover
+                    />
                     <div className="fixed top-0 left-0 h-full w-1/5 min-w-[200px] pt-14">
                         <LeftSidebar />
                     </div>

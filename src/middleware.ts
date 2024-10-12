@@ -9,9 +9,11 @@ export async function middleware(request: NextRequest) {
             return NextResponse.next();
         }
 
-        if (request.nextUrl.pathname === '/') {
-            return NextResponse.redirect(new URL('/home/newsfeed', request.url));
-        }
+        config.matcher.forEach((path) => {
+            if (!request.nextUrl.pathname.startsWith(path)) {
+                return NextResponse.redirect(new URL('/home/newsfeed', request.url));
+            }
+        });
 
         if (!sessionToken) {
             return NextResponse.redirect(new URL('/auth/login', request.url));
