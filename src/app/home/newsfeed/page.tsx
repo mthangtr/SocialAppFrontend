@@ -52,8 +52,8 @@ export default function NewsFeed() {
 
     const handlePostCreated = (newPost: PostType) => {
         toast.success("Post created successfully");
-        const audio = new Audio('/assets/sounds/new-notification.mp3');
-        audio.play().catch((error) => console.log('Error playing sound:', error));
+        // const audio = new Audio('/assets/sounds/new-notification.mp3');
+        // audio.play().catch((error) => console.log('Error playing sound:', error));
         setNewPost(prevPosts => [newPost, ...prevPosts]);
     };
 

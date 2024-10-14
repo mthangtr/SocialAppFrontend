@@ -13,35 +13,38 @@ import { TimeAgo } from '@/utils/FormatTime';
 import { UserType } from '@/types/Global';
 import PostTextContent from './PostTextContent';
 import { useReactToPostMutation } from '@/libs/features/postsSlice'
+import ReactionModal from './ReactionModal';
 
 export default function Post({ postsData, user }: { postsData: PostType, user: UserType }) {
+    const [postData, setPostData] = useState<PostType | null>(postsData);
     const [showFullText, setShowFullText] = useState(false);
     const [reactToPost] = useReactToPostMutation();
 
     useEffect(() => {
-        if (postsData?.content?.length <= maxLength) {
+        if (postData?.content?.length <= maxLength) {
             setShowFullText(true);
         }
-    }, [postsData?.content?.length]);
+    }, [postData?.content?.length]);
 
     const toggleShowMore = () => {
         setShowFullText(!showFullText);
     };
 
-    const text = postsData?.content;
+    const text = postData?.content;
 
     const maxLength = 300;
     const displayText = showFullText ? text : text?.substring(0, maxLength) + '...';
 
     const handleReaction = async (reaction: any) => {
         try {
-            reactToPost({ postId: postsData?._id, reaction }).unwrap();
+            const updatedPost = await reactToPost({ postId: postData?._id, reaction }).unwrap();
+            setPostData(updatedPost);
         } catch (error) {
             console.error('Error updating reaction:', error);
         }
     };
 
-    const images = postsData?.media;
+    const images = postData?.media;
 
     const renderImages = () => {
         if (!images || images.length === 0) {
@@ -53,13 +56,13 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
                 return null;
             case 1:
                 return (
-                    <Link href={`/post-detail/${postsData?._id}`}>
+                    <Link href={`/post-detail/${postData?._id}`}>
                         <img src={images[0]} alt="Post" className="w-full h-auto select-none rounded-sm" />
                     </Link>
                 );
             case 2:
                 return (
-                    <Link href={`/post-detail/${postsData?._id}`} className="flex space-x-1">
+                    <Link href={`/post-detail/${postData?._id}`} className="flex space-x-1">
                         {Array.isArray(images) && images.map((img, idx) => (
                             <img key={idx} src={img} alt="Post" className="w-1/2 h-auto object-cover select-none rounded-sm" />
                         ))}
@@ -67,7 +70,7 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
                 );
             case 3:
                 return (
-                    <Link href={`/post-detail/${postsData?._id}`} className="grid grid-cols-2 gap-1">
+                    <Link href={`/post-detail/${postData?._id}`} className="grid grid-cols-2 gap-1">
                         <img src={images[0]} alt="Post" className="col-span-2 w-full h-auto object-cover rounded-sm select-none" />
                         {images.slice(1, 3).map((img, idx) => (
                             <img key={idx} src={img} alt="Post" className="w-full h-auto object-cover rounded-sm select-none" />
@@ -76,7 +79,7 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
                 );
             case 4:
                 return (
-                    <Link href={`/post-detail/${postsData?._id}`} className="grid grid-cols-3 gap-1">
+                    <Link href={`/post-detail/${postData?._id}`} className="grid grid-cols-3 gap-1">
                         <div className="col-span-2">
                             <img src={images[0]} alt="Post" className="w-full h-full object-cover select-none" />
                         </div>
@@ -89,7 +92,7 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
                 );
             default:
                 return (
-                    <Link href={`/post-detail/${postsData?._id}`} className="grid grid-cols-3 gap-1">
+                    <Link href={`/post-detail/${postData?._id}`} className="grid grid-cols-3 gap-1">
                         <div className="col-span-2">
                             <img src={images[0]} alt="Post" className="w-full h-full object-cover rounded-sm select-none" />
                         </div>
@@ -113,10 +116,10 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
         <>
             <div className="mt-8 border p-6 rounded-lg shadow-lg bg-background">
                 <div className="flex items-center mb-4">
-                    <Avatar className="mr-4 select-none" src={`${postsData?.user?.pfp?.toString()}`} size="md" />
+                    <Avatar className="mr-4 select-none" src={`${postData?.user?.pfp?.toString()}`} size="md" />
                     <div>
-                        <p className="font-semibold text-lg">{postsData?.user?.username}</p>
-                        <p className="text-gray-500 text-sm dark:text-white/50 select-none">{TimeAgo(postsData?.createdAt?.toString())}</p>
+                        <p className="font-semibold text-lg">{postData?.user?.username}</p>
+                        <p className="text-gray-500 text-sm dark:text-white/50 select-none">{TimeAgo(postData?.createdAt?.toString())}</p>
                     </div>
                 </div>
                 <p className="">{<PostTextContent text={displayText} />}
@@ -130,11 +133,11 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
                 </div>
 
                 <div className=" text-sm text-gray-500 dark:text-white/50 my-4 select-none">
-                    <span>{postsData?.reactions?.length} reactions</span>
+                    <ReactionModal post={postData} />
                 </div>
 
                 <div className="w-full border-y py-2 mb-4 flex justify-around items-center">
-                    <ReactionButton post={postsData} onReact={handleReaction} user={user} /> {/* Use ReactionButton */}
+                    <ReactionButton post={postData} onReact={handleReaction} user={user} /> {/* Use ReactionButton */}
                     <Button variant={"ghost"}>
                         <FontAwesomeIcon icon={faMessage} />
                         <span className="ml-2 select-none">Comment</span>
@@ -149,7 +152,7 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
                     <Comment />
                     <Comment />
                     <div className="w-full">
-                        <Link href={`/post-detail/${postsData?._id}`} className="select-none underline font-semibold text-sm text-gray-500 dark:text-white/50">
+                        <Link href={`/post-detail/${postData?._id}`} className="select-none underline font-semibold text-sm text-gray-500 dark:text-white/50">
                             View all comments
                         </Link>
                     </div>
