@@ -15,13 +15,20 @@ import PostTextContent from './PostTextContent';
 import { useReactToPostMutation } from '@/libs/features/postsSlice'
 import ReactionModal from './ReactionModal';
 import { SendHorizontal } from 'lucide-react';
+import {
+    Carousel,
+    CarouselMainContainer,
+    CarouselThumbsContainer,
+    SliderMainItem,
+    SliderThumbItem,
+} from "@/components/ui/extension/carousel";
 
 export default function Post({ postsData, user }: { postsData: PostType, user: UserType }) {
     const [postData, setPostData] = useState<PostType | null>(postsData);
     const [showFullText, setShowFullText] = useState(false);
     const [reactToPost] = useReactToPostMutation();
     const [commentText, setCommentText] = useState('');
-
+    const [showCarousel, setShowCarousel] = useState(false);
     const commentInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
@@ -54,6 +61,9 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
 
     const images = postData?.media;
 
+    const handleImageClick = () => setShowCarousel(true);
+    const handleCarouselClose = () => setShowCarousel(false);
+
     const renderImages = () => {
         if (!images || images.length === 0) {
             return null;
@@ -64,30 +74,30 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
                 return null;
             case 1:
                 return (
-                    <Link href={`/post-detail/${postData?._id}`}>
+                    <div onClick={handleImageClick}>
                         <img src={images[0]} alt="Post" className="w-full h-auto select-none rounded-sm" />
-                    </Link>
+                    </div>
                 );
             case 2:
                 return (
-                    <Link href={`/post-detail/${postData?._id}`} className="flex space-x-1">
+                    <div onClick={handleImageClick} className="flex space-x-1">
                         {Array.isArray(images) && images.map((img, idx) => (
                             <img key={idx} src={img} alt="Post" className="w-1/2 h-auto object-cover select-none rounded-sm" />
                         ))}
-                    </Link>
+                    </div>
                 );
             case 3:
                 return (
-                    <Link href={`/post-detail/${postData?._id}`} className="grid grid-cols-2 gap-1">
+                    <div onClick={handleImageClick} className="grid grid-cols-2 gap-1">
                         <img src={images[0]} alt="Post" className="col-span-2 w-full h-auto object-cover rounded-sm select-none" />
                         {images.slice(1, 3).map((img, idx) => (
                             <img key={idx} src={img} alt="Post" className="w-full h-auto object-cover rounded-sm select-none" />
                         ))}
-                    </Link>
+                    </div>
                 );
             case 4:
                 return (
-                    <Link href={`/post-detail/${postData?._id}`} className="grid grid-cols-3 gap-1">
+                    <div onClick={handleImageClick} className="grid grid-cols-3 gap-1">
                         <div className="col-span-2">
                             <img src={images[0]} alt="Post" className="w-full h-full object-cover select-none" />
                         </div>
@@ -96,11 +106,11 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
                                 <img key={idx} src={img} alt="Post" className="w-full h-auto object-cover rounded-sm select-none" />
                             ))}
                         </div>
-                    </Link>
+                    </div>
                 );
             default:
                 return (
-                    <Link href={`/post-detail/${postData?._id}`} className="grid grid-cols-3 gap-1">
+                    <div onClick={handleImageClick} className="grid grid-cols-3 gap-1">
                         <div className="col-span-2">
                             <img src={images[0]} alt="Post" className="w-full h-full object-cover rounded-sm select-none" />
                         </div>
@@ -115,7 +125,7 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
                                 </div>
                             </div>
                         </div>
-                    </Link>
+                    </div>
                 );
         }
     };
@@ -139,6 +149,33 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
                 <div className='mt-4'>
                     {renderImages()}
                 </div>
+
+                {/* Carousel */}
+                {showCarousel && (
+                    <div className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center">
+                        <button className="absolute top-4 right-4 text-white" onClick={handleCarouselClose}>
+                            Close
+                        </button>
+                        <Carousel orientation="horizontal" className="w-full max-w-3xl items-center gap-4">
+                            <div className="">
+                                <CarouselMainContainer className="h-full">
+                                    {images?.map((img, idx) => (
+                                        <SliderMainItem key={idx} className=" items-center justify-center h-full rounded-md">
+                                            <img src={img} alt={`Slide ${idx + 1}`} className="w-full h-full object-cover rounded-md" />
+                                        </SliderMainItem>
+                                    ))}
+                                </CarouselMainContainer>
+                            </div>
+                            <CarouselThumbsContainer className="h-full  ">
+                                {images?.map((img, idx) => (
+                                    <SliderThumbItem key={idx} index={idx} className="rounded-md bg-transparent">
+                                        <img src={img} alt={`Thumbnail ${idx + 1}`} className="h-20 w-full object-cover rounded-md cursor-pointer" />
+                                    </SliderThumbItem>
+                                ))}
+                            </CarouselThumbsContainer>
+                        </Carousel>
+                    </div>
+                )}
 
                 <div className=" text-sm text-gray-500 dark:text-white/50 my-4 select-none">
                     <ReactionModal post={postData} />
