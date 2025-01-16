@@ -47,7 +47,7 @@ function ReactionModal({ post }: { post: PostType }) {
             {/* Modal */}
             <Transition appear show={isOpen} as={Fragment}>
                 <Dialog
-                    className="fixed z-10 inset-0 overflow-y-auto backdrop-blur-sm bg-white/30"
+                    className="fixed z-10 inset-0 overflow-y-auto"
                     onClose={closeModal}
                 >
                     <Transition.Child
@@ -59,7 +59,7 @@ function ReactionModal({ post }: { post: PostType }) {
                         leaveFrom="opacity-100"
                         leaveTo="opacity-0"
                     >
-                        <div className="fixed inset-0 opacity-30" />
+                        <div className="fixed inset-0 bg-black bg-opacity-30" />
                     </Transition.Child>
 
                     <div className="fixed inset-0 overflow-y-auto">

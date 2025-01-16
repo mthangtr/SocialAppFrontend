@@ -1,20 +1,14 @@
 "use client";
 import { useState, useEffect, useRef } from 'react';
 import { Avatar } from "@nextui-org/react";
-import { Input } from "@/components/ui/inputShadcn";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMessage, faShareFromSquare } from '@fortawesome/free-regular-svg-icons';
 import { Button } from "@/components/ui/button";
-import ReactionButton from "@/components/Buttons/ReactionButton"
-import Comment from './Comment';
-import Link from 'next/link';
 import type { PostType } from '@/types/Global';
 import { TimeAgo } from '@/utils/FormatTime';
 import { UserType } from '@/types/Global';
 import PostTextContent from './PostTextContent';
-import { useReactToPostMutation } from '@/libs/features/postsSlice'
-import ReactionModal from './ReactionModal';
-import { SendHorizontal } from 'lucide-react';
+import ReactionContainer from './ReactionContainer';
 import {
     Carousel,
     CarouselMainContainer,
@@ -22,14 +16,12 @@ import {
     SliderMainItem,
     SliderThumbItem,
 } from "@/components/ui/extension/carousel";
+import CommentContainer from './CommentContainer';
 
 export default function Post({ postsData, user }: { postsData: PostType, user: UserType }) {
     const [postData, setPostData] = useState<PostType | null>(postsData);
     const [showFullText, setShowFullText] = useState(false);
-    const [reactToPost] = useReactToPostMutation();
-    const [commentText, setCommentText] = useState('');
     const [showCarousel, setShowCarousel] = useState(false);
-    const commentInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         if (postData?.content?.length <= maxLength) {
@@ -46,23 +38,14 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
     const maxLength = 300;
     const displayText = showFullText ? text : text?.substring(0, maxLength) + '...';
 
-    const handleReaction = async (reaction: any) => {
-        try {
-            const updatedPost = await reactToPost({ postId: postData?._id, reaction }).unwrap();
-            setPostData(updatedPost);
-        } catch (error) {
-            console.error('Error updating reaction:', error);
-        }
-    };
-
-    const handleCommentButtonClick = () => {
-        commentInputRef.current?.focus();
-    };
-
     const images = postData?.media;
 
     const handleImageClick = () => setShowCarousel(true);
     const handleCarouselClose = () => setShowCarousel(false);
+
+    const handleSendComment = () => {
+
+    }
 
     const renderImages = () => {
         if (!images || images.length === 0) {
@@ -177,48 +160,25 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
                     </div>
                 )}
 
-                <div className=" text-sm text-gray-500 dark:text-white/50 my-4 select-none">
-                    <ReactionModal post={postData} />
-                </div>
-
                 <div className="w-full border-y py-2 mb-4 flex justify-around items-center">
-                    <ReactionButton post={postData} onReact={handleReaction} user={user} /> {/* Use ReactionButton */}
-                    <Button variant={"ghost"} onClick={handleCommentButtonClick}>
+                    <ReactionContainer postsData={postData} user={user} />
+                    {/* onClick={handleCommentButtonClick} */}
+                    {/* <Button variant={"ghost"} >
                         <FontAwesomeIcon icon={faMessage} />
                         <span className="ml-2 select-none">Comment</span>
-                    </Button>
+                    </Button> */}
                     <Button variant={"ghost"}>
                         <FontAwesomeIcon icon={faShareFromSquare} />
                         <span className="ml-2 select-none">Share</span>
                     </Button>
                 </div>
 
-                <div className="mb-4">
-                    <Comment />
-                    <Comment />
-                    <div className="w-full">
-                        <Link href={`/post-detail/${postData?._id}`} className="select-none underline font-semibold text-sm text-gray-500 dark:text-white/50">
-                            View all comments
-                        </Link>
-                    </div>
+
+                <div className="">
+                    <CommentContainer postsData={postData} user={user} />
                 </div>
 
-                <div className="flex items-center">
-                    <Avatar className="select-none mr-4 flex-shrink-0" src={`${user?.pfp}`} alt={`${user?.username}`} size="sm" />
-                    <Input
-                        ref={commentInputRef}
-                        className="select-none w-full border bg-gray-100 rounded-lg px-4 py-2 dark:bg-[hsl(0,0%,20%)]"
-                        type='text'
-                        placeholder="Write your comment..."
-                        value={commentText}
-                        onChange={(e) => setCommentText(e.target.value)}
-                    />
-                    {commentText.trim().length > 0 && (
-                        <Button variant={"ghost"} className="select-none mx-2">
-                            <SendHorizontal size={24} />
-                        </Button>
-                    )}
-                </div>
+
             </div>
         </>
     );

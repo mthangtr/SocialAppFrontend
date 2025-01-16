@@ -22,7 +22,7 @@ export interface Reaction {
 // Post Schema
 export interface PostType {
     _id: PostID;
-    user: User;
+    user: any;
     content: string;
     media: string[];
     reactions: Reaction[];
@@ -33,14 +33,18 @@ export interface PostType {
 }
 
 // Comment Schema
-export interface Comment {
-    post: PostID;
-    user: UserID;
+export interface CommentType {
+    _id: string;
     content: string;
+    user: {
+        _id: string;
+        username: string;
+        pfp: string;
+    };
+    children: CommentType[]; // Nested replies
     reactions: Reaction[];
-    replies: CommentID[];
     createdAt: Date;
-    updatedAt: Date | null;
+    updatedAt: Date;
 }
 
 // Friend Request Schema

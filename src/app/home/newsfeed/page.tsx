@@ -76,8 +76,8 @@ export default function NewsFeed() {
                 loader={<div className='flex justify-center items-center mt-2 pt-2'><Spinner /></div>}
                 endMessage={<div className='flex justify-center items-center mt-2 pt-2'><h1>No more content</h1></div>}
             >
-                {posts.map((post, idx) => (
-                    <Post key={idx} postsData={post} user={user} />
+                {posts.map((post) => (
+                    <Post key={post._id} postsData={post} user={user} />
                 ))}
             </InfiniteScroll>
         </div>
