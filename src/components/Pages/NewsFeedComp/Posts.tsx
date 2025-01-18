@@ -1,14 +1,12 @@
 "use client";
 import { useState, useEffect, useRef } from 'react';
 import { Avatar } from "@nextui-org/react";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMessage, faShareFromSquare } from '@fortawesome/free-regular-svg-icons';
-import { Button } from "@/components/ui/button";
+
 import type { PostType } from '@/types/Global';
 import { TimeAgo } from '@/utils/FormatTime';
 import { UserType } from '@/types/Global';
 import PostTextContent from './PostTextContent';
-import ReactionContainer from './ReactionContainer';
+import ActionContainer from './ActionContainer';
 import {
     Carousel,
     CarouselMainContainer,
@@ -42,10 +40,6 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
 
     const handleImageClick = () => setShowCarousel(true);
     const handleCarouselClose = () => setShowCarousel(false);
-
-    const handleSendComment = () => {
-
-    }
 
     const renderImages = () => {
         if (!images || images.length === 0) {
@@ -115,7 +109,7 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
 
     return (
         <>
-            <div className="mt-8 border p-6 rounded-lg shadow-lg bg-background">
+            <div className="mt-8 border px-6 py-4 rounded-lg shadow-lg bg-background">
                 <div className="flex items-center mb-4">
                     <Avatar className="mr-4 select-none" src={`${postData?.user?.pfp?.toString()}`} size="md" />
                     <div>
@@ -160,25 +154,14 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
                     </div>
                 )}
 
-                <div className="w-full border-y py-2 mb-4 flex justify-around items-center">
-                    <ReactionContainer postsData={postData} user={user} />
-                    {/* onClick={handleCommentButtonClick} */}
-                    {/* <Button variant={"ghost"} >
-                        <FontAwesomeIcon icon={faMessage} />
-                        <span className="ml-2 select-none">Comment</span>
-                    </Button> */}
-                    <Button variant={"ghost"}>
-                        <FontAwesomeIcon icon={faShareFromSquare} />
-                        <span className="ml-2 select-none">Share</span>
-                    </Button>
+                <div className="">
+                    <ActionContainer postsData={postData} user={user} />
                 </div>
 
 
                 <div className="">
                     <CommentContainer postsData={postData} user={user} />
                 </div>
-
-
             </div>
         </>
     );

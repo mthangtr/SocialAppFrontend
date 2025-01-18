@@ -12,6 +12,8 @@ import { SendHorizontal } from "lucide-react";
 import { Input } from "@/components/ui/inputShadcn";
 import { Avatar } from "@nextui-org/react";
 import { Button } from "@/components/ui/button";
+import { useAppSelector, useAppDispatch } from '@/libs/hooks';
+import { closeModal } from '@/libs/features/modalSlice';
 
 interface PreviewCommentsResponse {
     comments: CommentType[];
@@ -30,21 +32,21 @@ function CommentContainer({
     postsData: PostType;
     user: UserType;
 }) {
-    const [isOpen, setIsOpen] = useState(false);
     const [page, setPage] = useState(1);
-    const [previewComments, setPreviewComments] = useState<CommentType[]>([]); // Preview comments
     const [comments, setComments] = useState<CommentType[]>([]); // All comments
-    const [hasMore2cmts, setHasMore2cmts] = useState(false); // Has more than 2 comments
     const [hasMore, setHasMore] = useState(false); // Has more comments for pagination
     const [commentText, setCommentText] = useState("");
     const commentInputRef = useRef<HTMLInputElement>(null);
+    const [activeReplyId, setActiveReplyId] = useState<string | null>(null); // Track active reply input
+
+    const dispatch = useAppDispatch();
+    const { isOpen, postId } = useAppSelector((state) => state.modal);
+
+    const closeModalHandler = () => {
+        dispatch(closeModal());
+    };
 
     const [createComment] = useCreateCommentMutation();
-
-    const { data: previewCommentsData } = useFetchOnly2CommentsQuery(
-        { postId: postsData._id },
-        { selectFromResult: (result) => result }
-    ) as { data: PreviewCommentsResponse };
 
     const { data: commentsData } = useFetchCommentsQuery(
         { postId: postsData._id, page },
@@ -54,28 +56,33 @@ function CommentContainer({
     ) as { data: CommentsResponse };
 
     useEffect(() => {
-        if (previewCommentsData?.comments) {
-            setPreviewComments(previewCommentsData.comments);
-            setHasMore2cmts(previewCommentsData.hasMore2cmts || false);
-        }
-    }, [previewCommentsData]);
-
-    useEffect(() => {
         if (commentsData?.comments && isOpen) {
-            setComments((prev) => [...prev, ...commentsData.comments]);
+            setComments((prev) => {
+                const existingIds = new Set(prev.map((comment) => comment._id));
+                const newComments = commentsData.comments.filter(
+                    (comment) => !existingIds.has(comment._id)
+                );
+                return [...prev, ...newComments];
+            });
             setHasMore(commentsData.hasMore || false);
         }
     }, [commentsData, isOpen]);
 
-    const openModal = () => {
-        setIsOpen(true);
-        setPage(1);
-    };
+    useEffect(() => {
+        if (isOpen) {
+            const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+            document.body.style.paddingRight = `${scrollbarWidth}px`;
+            document.body.style.overflow = 'hidden'; // Chặn cuộn
+        } else {
+            document.body.style.paddingRight = '';
+            document.body.style.overflow = ''; // Khôi phục cuộn
+        }
 
-    const closeModal = () => {
-        setIsOpen(false);
-        setComments([]); // Reset comments when closing modal
-    };
+        return () => {
+            document.body.style.paddingRight = '';
+            document.body.style.overflow = ''; // Đảm bảo cleanup khi unmount
+        };
+    }, [isOpen]);
 
     const loadMoreComments = () => {
         if (hasMore) {
@@ -93,7 +100,6 @@ function CommentContainer({
                 post: postsData._id,
             }).unwrap();
 
-            setPreviewComments((prev) => [newComment, ...prev]);
             setComments((prev) => [newComment, ...prev]);
             setCommentText("");
             commentInputRef.current?.blur();
@@ -102,30 +108,35 @@ function CommentContainer({
         }
     };
 
+    const handleReply = async (parentId: string, content: string) => {
+        try {
+            const newReply = await createComment({
+                content,
+                user: user?._id,
+                post: postsData._id,
+                parent: parentId,
+            }).unwrap();
+
+            setComments((prev) =>
+                prev.map((comment) =>
+                    comment._id === parentId
+                        ? { ...comment, children: [...(comment.children || []), newReply] }
+                        : comment
+                )
+            );
+        } catch (error) {
+            console.error("Failed to send reply:", error);
+        }
+    };
+
     if (!postsData) return null;
+    if (postId !== postsData._id) return null;
 
     return (
         <>
-            {/* Display preview comments */}
-            {previewComments.map((comment) => (
-                <Comment key={comment._id} commentData={comment} />
-            ))}
-
-            {/* Show "View all comments" button */}
-            {hasMore2cmts && (
-                <div className="w-full">
-                    <button
-                        onClick={openModal}
-                        className="select-none underline font-semibold text-sm text-gray-500 dark:text-white/50"
-                    >
-                        View all comments
-                    </button>
-                </div>
-            )}
-
             {/* Modal for all comments */}
             <Transition appear show={isOpen} as={Fragment}>
-                <Dialog as="div" className="relative z-10" onClose={closeModal}>
+                <Dialog as="div" className="relative z-10" onClose={closeModalHandler}>
                     <Transition.Child
                         as={Fragment}
                         enter="ease-out duration-300"
@@ -149,14 +160,26 @@ function CommentContainer({
                                 leaveFrom="opacity-100 scale-100"
                                 leaveTo="opacity-0 scale-95"
                             >
-                                <Dialog.Panel className="w-full max-w-2xl p-6 bg-background rounded-2xl shadow-xl">
+                                <Dialog.Panel className="w-full max-w-5xl p-6 bg-background rounded-2xl shadow-xl">
                                     <Dialog.Title className="text-lg font-medium">
                                         All Comments
                                     </Dialog.Title>
-                                    <div className="mt-4 max-h-80 overflow-y-auto">
-                                        {comments.map((comment) => (
-                                            <Comment key={comment._id} commentData={comment} />
-                                        ))}
+                                    <div className="mt-4 h-[80vh] overflow-y-auto">
+                                        {comments.length > 0 ? (comments.map((comment) => (
+                                            <Comment
+                                                key={comment._id}
+                                                commentData={comment}
+                                                onReply={handleReply}
+                                                activeReplyId={activeReplyId}
+                                                setActiveReplyId={setActiveReplyId}
+                                            />
+                                        ))) : (
+                                            <div className="h-[80vh] flex justify-center items-center">
+                                                <div className="font-bold text-gray-500 dark:text-white/50">
+                                                    No comments yet
+                                                </div>
+                                            </div>
+                                        )}
                                         <div className="flex justify-items-start">
                                             {hasMore && (
                                                 <button
@@ -168,12 +191,20 @@ function CommentContainer({
                                             )}
                                         </div>
                                     </div>
-                                    <button
-                                        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-                                        onClick={closeModal}
-                                    >
-                                        Close
-                                    </button>
+                                    {/* Comment input */}
+                                    <div className="flex items-center mt-4">
+                                        <Avatar src={user?.pfp} size="sm" />
+                                        <Input
+                                            ref={commentInputRef}
+                                            className="flex-1 mx-2"
+                                            value={commentText}
+                                            onChange={(e) => setCommentText(e.target.value)}
+                                            placeholder="Write a comment..."
+                                        />
+                                        <Button variant="ghost" onClick={handleSendComment} disabled={!commentText.trim()}>
+                                            <SendHorizontal></SendHorizontal>
+                                        </Button>
+                                    </div>
                                 </Dialog.Panel>
                             </Transition.Child>
                         </div>
@@ -181,20 +212,7 @@ function CommentContainer({
                 </Dialog>
             </Transition>
 
-            {/* Comment input */}
-            <div className="flex items-center mt-4">
-                <Avatar src={user?.pfp} size="sm" />
-                <Input
-                    ref={commentInputRef}
-                    className="flex-1 mx-2"
-                    value={commentText}
-                    onChange={(e) => setCommentText(e.target.value)}
-                    placeholder="Write a comment..."
-                />
-                <Button onClick={handleSendComment} disabled={!commentText.trim()}>
-                    <SendHorizontal></SendHorizontal>
-                </Button>
-            </div>
+
         </>
     );
 }

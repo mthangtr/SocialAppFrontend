@@ -51,6 +51,11 @@ export const commentsSlice = apiSlice.injectEndpoints({
                 { type: "Comment", id },
             ],
         }),
+        getTotalCommentsByPostId: builder.query({
+            query: (postId) => ({
+                url: `${COMMENT_URL}/${postId}/total`,
+            }),
+        }),
     }),
 });
 
@@ -60,4 +65,5 @@ export const {
     useCreateCommentMutation,
     useEditCommentMutation,
     useRemoveCommentMutation,
+    useGetTotalCommentsByPostIdQuery,
 } = commentsSlice;

@@ -25,6 +25,7 @@ import {
     useLogoutMutation,
 } from "@/libs/features/auth/logresSlice";
 import { useRouter } from "next/navigation";
+import { MessageCircleMore } from 'lucide-react';
 
 function Header() {
     const user: UserType = useAppSelector((state) => (state as { auth: { userInfo: UserType } }).auth.userInfo);
@@ -48,7 +49,7 @@ function Header() {
                 </div>
                 <div className="flex items-center space-x-4">
                     <ModeToggle />
-                    <Button variant="outline" size="icon"><SendIcon /></Button>
+                    <Button variant="outline" size="icon"><MessageCircleMore /></Button>
                     <Button variant="outline" size="icon"><NotificationsIcon /></Button>
                     <MenubarMenu>
                         <MenubarTrigger>

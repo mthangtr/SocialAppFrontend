@@ -38,6 +38,22 @@ function ReactionModal({ post }: { post: PostType }) {
         setReactions(post?.reactions || []);
     }, [post?.reactions]);
 
+    useEffect(() => {
+        if (isOpen) {
+            const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+            document.body.style.paddingRight = `${scrollbarWidth}px`;
+            document.body.style.overflow = 'hidden'; // Chặn cuộn
+        } else {
+            document.body.style.paddingRight = '';
+            document.body.style.overflow = ''; // Khôi phục cuộn
+        }
+
+        return () => {
+            document.body.style.paddingRight = '';
+            document.body.style.overflow = ''; // Đảm bảo cleanup khi unmount
+        };
+    }, [isOpen]);
+
     return (
         <>
             <button onClick={openModal} className="hover:underline cursor-pointer">
@@ -47,7 +63,7 @@ function ReactionModal({ post }: { post: PostType }) {
             {/* Modal */}
             <Transition appear show={isOpen} as={Fragment}>
                 <Dialog
-                    className="fixed z-10 inset-0 overflow-y-auto"
+                    className="fixed z-10 inset-0 overflow-y-scroll"
                     onClose={closeModal}
                 >
                     <Transition.Child
@@ -73,7 +89,7 @@ function ReactionModal({ post }: { post: PostType }) {
                                 leaveFrom="opacity-100 scale-100"
                                 leaveTo="opacity-0 scale-95"
                             >
-                                <Dialog.Panel className="bg-background w-full max-w-md transform overflow-hidden rounded-2xl p-6 text-left align-middle shadow-xl transition-all">
+                                <Dialog.Panel className="dialog-scroll bg-background w-full max-w-md transform overflow-hidden rounded-2xl p-6 text-left align-middle shadow-xl transition-all">
                                     <Dialog.Title
                                         as="h3"
                                         className="text-lg font-medium leading-6 select-none"
@@ -95,6 +111,7 @@ function ReactionModal({ post }: { post: PostType }) {
                                                         >
                                                             <div className="flex items-center">
                                                                 <Avatar
+                                                                    className='select-none'
                                                                     src={reaction.user.pfp}
                                                                     alt={reaction.user.username}
                                                                     size="sm"
@@ -105,7 +122,7 @@ function ReactionModal({ post }: { post: PostType }) {
                                                             </div>
                                                             {/* Display the reaction emoji */}
                                                             {userReaction && (
-                                                                <span className="text-2xl">
+                                                                <span className="text-2xl select-none">
                                                                     {userReaction.emoji}
                                                                 </span>
                                                             )}
