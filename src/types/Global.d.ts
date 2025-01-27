@@ -41,7 +41,7 @@ export interface CommentType {
         username: string;
         pfp: string;
     };
-    children: CommentType[]; // Nested replies
+    children: CommentType[];
     reactions: Reaction[];
     createdAt: Date;
     updatedAt: Date;

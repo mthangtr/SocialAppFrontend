@@ -56,6 +56,15 @@ export const commentsSlice = apiSlice.injectEndpoints({
                 url: `${COMMENT_URL}/${postId}/total`,
             }),
         }),
+        fetchRepliesForComment: builder.query({
+            query: ({ commentId, page }) => ({
+                url: `${COMMENT_URL}/${commentId}/replies?page=${page}`,
+            }),
+            transformResponse: (response) => response,
+            providesTags: (result, error, { commentId }) => [
+                { type: "Comment", id: `COMMENT_${commentId}_REPLIES` },
+            ],
+        }),
     }),
 });
 
@@ -66,4 +75,5 @@ export const {
     useEditCommentMutation,
     useRemoveCommentMutation,
     useGetTotalCommentsByPostIdQuery,
+    useFetchRepliesForCommentQuery,
 } = commentsSlice;

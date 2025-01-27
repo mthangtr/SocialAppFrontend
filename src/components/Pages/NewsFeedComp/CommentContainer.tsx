@@ -5,7 +5,6 @@ import { Dialog, Transition } from "@headlessui/react";
 import { useState, Fragment, useEffect, useRef } from "react";
 import {
     useFetchCommentsQuery,
-    useFetchOnly2CommentsQuery,
     useCreateCommentMutation,
 } from "@/libs/features/commentsSlice";
 import { SendHorizontal } from "lucide-react";
@@ -14,11 +13,7 @@ import { Avatar } from "@nextui-org/react";
 import { Button } from "@/components/ui/button";
 import { useAppSelector, useAppDispatch } from '@/libs/hooks';
 import { closeModal } from '@/libs/features/modalSlice';
-
-interface PreviewCommentsResponse {
-    comments: CommentType[];
-    hasMore2cmts: boolean;
-}
+import { BlockScolling } from "@/utils/BlockScrolling";
 
 interface CommentsResponse {
     comments: CommentType[];
@@ -56,33 +51,20 @@ function CommentContainer({
     ) as { data: CommentsResponse };
 
     useEffect(() => {
-        if (commentsData?.comments && isOpen) {
-            setComments((prev) => {
-                const existingIds = new Set(prev.map((comment) => comment._id));
-                const newComments = commentsData.comments.filter(
-                    (comment) => !existingIds.has(comment._id)
-                );
-                return [...prev, ...newComments];
-            });
-            setHasMore(commentsData.hasMore || false);
+        if (isOpen) {
+            BlockScolling({ isOpen });
+            if (commentsData?.comments) {
+                setComments((prev) => {
+                    const existingIds = new Set(prev.map((comment) => comment._id));
+                    const newComments = commentsData.comments.filter(
+                        (comment) => !existingIds.has(comment._id)
+                    );
+                    return [...prev, ...newComments];
+                });
+                setHasMore(commentsData.hasMore || false);
+            }
         }
     }, [commentsData, isOpen]);
-
-    useEffect(() => {
-        if (isOpen) {
-            const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-            document.body.style.paddingRight = `${scrollbarWidth}px`;
-            document.body.style.overflow = 'hidden'; // Chặn cuộn
-        } else {
-            document.body.style.paddingRight = '';
-            document.body.style.overflow = ''; // Khôi phục cuộn
-        }
-
-        return () => {
-            document.body.style.paddingRight = '';
-            document.body.style.overflow = ''; // Đảm bảo cleanup khi unmount
-        };
-    }, [isOpen]);
 
     const loadMoreComments = () => {
         if (hasMore) {
@@ -108,7 +90,7 @@ function CommentContainer({
         }
     };
 
-    const handleReply = async (parentId: string, content: string) => {
+    const handleSendReply = async (parentId: string, content: string): Promise<CommentType> => {
         try {
             const newReply = await createComment({
                 content,
@@ -124,6 +106,7 @@ function CommentContainer({
                         : comment
                 )
             );
+            return newReply;
         } catch (error) {
             console.error("Failed to send reply:", error);
         }
@@ -169,7 +152,7 @@ function CommentContainer({
                                             <Comment
                                                 key={comment._id}
                                                 commentData={comment}
-                                                onReply={handleReply}
+                                                onReply={handleSendReply}
                                                 activeReplyId={activeReplyId}
                                                 setActiveReplyId={setActiveReplyId}
                                             />

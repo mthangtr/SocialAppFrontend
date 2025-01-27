@@ -11,9 +11,11 @@ import { useLoginMutation } from "@/libs/features/auth/logresSlice";
 import { Spinner } from '@nextui-org/react';
 
 function Login() {
+    const [rememberMe, setRememberMe] = useState(false);
     const [formData, setFormData] = useState({
         email: "",
         password: "",
+        rememberMe: rememberMe,
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isButtonDisabled, setIsButtonDisabled] = useState(false);
@@ -83,6 +85,10 @@ function Login() {
             [name]: value,
         });
     };
+
+    const handleRememberMe = (e: any) => {
+        setRememberMe(!rememberMe);
+    }
 
     return (
         <section className="relative">
@@ -161,6 +167,7 @@ function Login() {
                                 <div className="flex items-start">
                                     <div className="flex items-center h-5">
                                         <Input
+                                            onClick={handleRememberMe}
                                             id="remember"
                                             aria-describedby="remember"
                                             type="checkbox"

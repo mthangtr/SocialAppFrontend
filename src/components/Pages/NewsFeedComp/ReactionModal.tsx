@@ -3,6 +3,7 @@ import { Fragment, useState, useEffect } from 'react';
 import { PostType } from "@/types/Global";
 import { Avatar } from "@nextui-org/react";
 import { ThumbsUp } from 'lucide-react';
+import { BlockScolling } from '@/utils/BlockScrolling';
 
 const reactionsList = [
     {
@@ -40,18 +41,8 @@ function ReactionModal({ post }: { post: PostType }) {
 
     useEffect(() => {
         if (isOpen) {
-            const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-            document.body.style.paddingRight = `${scrollbarWidth}px`;
-            document.body.style.overflow = 'hidden'; // Chặn cuộn
-        } else {
-            document.body.style.paddingRight = '';
-            document.body.style.overflow = ''; // Khôi phục cuộn
+            BlockScolling({ isOpen });
         }
-
-        return () => {
-            document.body.style.paddingRight = '';
-            document.body.style.overflow = ''; // Đảm bảo cleanup khi unmount
-        };
     }, [isOpen]);
 
     return (
