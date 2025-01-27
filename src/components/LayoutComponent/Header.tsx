@@ -48,7 +48,6 @@ function Header() {
                     <Input type="search" placeholder="Search..." className="w-full max-w-xs" />
                 </div>
                 <div className="flex items-center space-x-4">
-                    <ModeToggle />
                     <Button variant="outline" size="icon"><MessageCircleMore /></Button>
                     <Button variant="outline" size="icon"><NotificationsIcon /></Button>
                     <MenubarMenu>
@@ -61,7 +60,7 @@ function Header() {
                         </MenubarTrigger>
                         <MenubarContent>
                             <MenubarItem>
-                                New Tab <MenubarShortcut>⌘T</MenubarShortcut>
+                                Theme: <MenubarShortcut><ModeToggle /></MenubarShortcut>
                             </MenubarItem>
                             <MenubarItem>New Window</MenubarItem>
                             <MenubarSeparator />

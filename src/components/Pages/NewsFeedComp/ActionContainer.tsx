@@ -17,10 +17,10 @@ function ActionContainer({ postsData, user }: { postsData: PostType, user: UserT
     const [postData, setPostData] = useState<PostType | null>(postsData);
     const [reactToPost] = useReactToPostMutation();
     const { data } = useGetTotalCommentsByPostIdQuery(postsData?._id);
-    const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
     const dispatch = useAppDispatch();
 
     const totalComments = data?.totalComments ?? 0;
+
     const handleReaction = async (reaction: any) => {
         try {
             const updatedPost = await reactToPost({ postId: postData?._id, reaction }).unwrap();

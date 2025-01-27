@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { useAppSelector, useAppDispatch } from '@/libs/hooks';
 import { closeModal } from '@/libs/features/modalSlice';
 import { BlockScolling } from "@/utils/BlockScrolling";
+import { X } from 'lucide-react';
 
 interface CommentsResponse {
     comments: CommentType[];
@@ -119,7 +120,7 @@ function CommentContainer({
         <>
             {/* Modal for all comments */}
             <Transition appear show={isOpen} as={Fragment}>
-                <Dialog as="div" className="relative z-10" onClose={closeModalHandler}>
+                <Dialog as="div" className="relative z-10" onClose={() => { }}>
                     <Transition.Child
                         as={Fragment}
                         enter="ease-out duration-300"
@@ -144,14 +145,26 @@ function CommentContainer({
                                 leaveTo="opacity-0 scale-95"
                             >
                                 <Dialog.Panel className="w-full max-w-5xl p-6 bg-background rounded-2xl shadow-xl">
-                                    <Dialog.Title className="text-lg font-medium">
-                                        All Comments
+                                    <Dialog.Title className="text-lg font-medium flex items-center justify-between">
+                                        <div></div>
+                                        <div className="select-none font-semibold text-lg">
+                                            All Comments
+                                        </div>
+                                        <Button
+                                            onClick={closeModalHandler}
+                                            className=""
+                                            variant="ghost"
+                                            size="icon"
+                                        >
+                                            <X />
+                                        </Button>
                                     </Dialog.Title>
                                     <div className="mt-4 h-[80vh] overflow-y-auto">
                                         {comments.length > 0 ? (comments.map((comment) => (
                                             <Comment
                                                 key={comment._id}
                                                 commentData={comment}
+                                                user={user}
                                                 onReply={handleSendReply}
                                                 activeReplyId={activeReplyId}
                                                 setActiveReplyId={setActiveReplyId}
@@ -176,7 +189,7 @@ function CommentContainer({
                                     </div>
                                     {/* Comment input */}
                                     <div className="flex items-center mt-4">
-                                        <Avatar src={user?.pfp} size="sm" />
+                                        <Avatar src={user?.pfp} size="sm" className="select-none" />
                                         <Input
                                             ref={commentInputRef}
                                             className="flex-1 mx-2"

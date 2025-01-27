@@ -15,6 +15,7 @@ import {
     SliderThumbItem,
 } from "@/components/ui/extension/carousel";
 import CommentContainer from './CommentContainer';
+import { Ellipsis } from 'lucide-react';
 
 export default function Post({ postsData, user }: { postsData: PostType, user: UserType }) {
     const [postData, setPostData] = useState<PostType | null>(postsData);
@@ -112,9 +113,12 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
             <div className="mt-8 border px-6 py-4 rounded-lg shadow-lg bg-background">
                 <div className="flex items-center mb-4">
                     <Avatar className="mr-4 select-none" src={`${postData?.user?.pfp?.toString()}`} size="md" />
-                    <div>
-                        <p className="font-semibold text-lg">{postData?.user?.username}</p>
-                        <p className="text-gray-500 text-sm dark:text-white/50 select-none">{TimeAgo(postData?.createdAt?.toString())}</p>
+                    <div className='flex justify-between w-full'>
+                        <div>
+                            <p className="font-semibold text-lg">{postData?.user?.username}</p>
+                            <p className="text-gray-500 text-sm dark:text-white/50 select-none">{TimeAgo(postData?.createdAt?.toString())}</p>
+                        </div>
+                        <Ellipsis />
                     </div>
                 </div>
                 <p className="">{<PostTextContent text={displayText} />}
