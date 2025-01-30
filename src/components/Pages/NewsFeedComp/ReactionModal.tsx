@@ -1,9 +1,9 @@
-import { Dialog, Transition } from '@headlessui/react';
-import { Fragment, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { PostType } from "@/types/Global";
 import { Avatar } from "@nextui-org/react";
 import { ThumbsUp } from 'lucide-react';
 import { BlockScolling } from '@/utils/BlockScrolling';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 
 const reactionsList = [
     {
@@ -11,7 +11,7 @@ const reactionsList = [
             <ThumbsUp
                 fill="#1877f2"
                 strokeWidth={1}
-                size={"18px"}
+                size={"24px"}
                 className="mr-1"
                 stroke="#0f5cb5"
             />
@@ -31,9 +31,6 @@ function ReactionModal({ post }: { post: PostType }) {
     const [reactionNumber, setReactionNumber] = useState(post?.reactions?.length);
     const [reactions, setReactions] = useState(post?.reactions || []);
 
-    const openModal = () => setIsOpen(true);
-    const closeModal = () => setIsOpen(false);
-
     useEffect(() => {
         setReactionNumber(post?.reactions?.length);
         setReactions(post?.reactions || []);
@@ -47,88 +44,44 @@ function ReactionModal({ post }: { post: PostType }) {
 
     return (
         <>
-            <button onClick={openModal} className="hover:underline cursor-pointer">
-                {reactionNumber} reactions
-            </button>
-
-            {/* Modal */}
-            <Transition appear show={isOpen} as={Fragment}>
-                <Dialog
-                    className="fixed z-10 inset-0 overflow-y-scroll"
-                    onClose={closeModal}
-                >
-                    <Transition.Child
-                        as={Fragment}
-                        enter="transition-opacity ease-linear duration-300"
-                        enterFrom="opacity-0"
-                        enterTo="opacity-100"
-                        leave="transition-opacity ease-linear duration-300"
-                        leaveFrom="opacity-100"
-                        leaveTo="opacity-0"
-                    >
-                        <div className="fixed inset-0 bg-black bg-opacity-30" />
-                    </Transition.Child>
-
-                    <div className="fixed inset-0 overflow-y-auto">
-                        <div className="flex items-center justify-center min-h-full p-4 text-center">
-                            <Transition.Child
-                                as={Fragment}
-                                enter="transition ease-out duration-300 transform"
-                                enterFrom="opacity-0 scale-95"
-                                enterTo="opacity-100 scale-100"
-                                leave="transition ease-in duration-200 transform"
-                                leaveFrom="opacity-100 scale-100"
-                                leaveTo="opacity-0 scale-95"
+            <DropdownMenu>
+                <DropdownMenuTrigger>
+                    <button className="hover:underline cursor-pointer">
+                        {reactionNumber} reactions
+                    </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align='start' side='right'>
+                    {post?.reactions?.map((reaction, index) => {
+                        const userReaction = reactionsList.find(
+                            (r) => r.label === reaction.type
+                        );
+                        return (
+                            <DropdownMenuItem
+                                key={index}
+                                className="flex items-center justify-between my-2 gap-8"
                             >
-                                <Dialog.Panel className="dialog-scroll bg-background w-full max-w-md transform overflow-hidden rounded-2xl p-6 text-left align-middle shadow-xl transition-all">
-                                    <Dialog.Title
-                                        as="h3"
-                                        className="text-lg font-medium leading-6 select-none"
-                                    >
-                                        Reactions
-                                    </Dialog.Title>
-                                    <div className="mt-2">
-                                        <div className="max-h-80 overflow-y-auto">
-                                            <ul>
-                                                {post?.reactions?.map((reaction, index) => {
-                                                    // Find the emoji for the reaction type
-                                                    const userReaction = reactionsList.find(
-                                                        (r) => r.label === reaction.type
-                                                    );
-                                                    return (
-                                                        <li
-                                                            key={index}
-                                                            className="flex items-center justify-between my-2"
-                                                        >
-                                                            <div className="flex items-center">
-                                                                <Avatar
-                                                                    className='select-none'
-                                                                    src={reaction.user.pfp}
-                                                                    alt={reaction.user.username}
-                                                                    size="sm"
-                                                                />
-                                                                <h1 className="ml-4 font-semibold">
-                                                                    {reaction.user.username}
-                                                                </h1>
-                                                            </div>
-                                                            {/* Display the reaction emoji */}
-                                                            {userReaction && (
-                                                                <span className="text-2xl select-none">
-                                                                    {userReaction.emoji}
-                                                                </span>
-                                                            )}
-                                                        </li>
-                                                    );
-                                                })}
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </Dialog.Panel>
-                            </Transition.Child>
-                        </div>
-                    </div>
-                </Dialog>
-            </Transition>
+                                <div className="flex items-center">
+                                    <Avatar
+                                        className='select-none'
+                                        src={reaction.user.pfp}
+                                        alt={reaction.user.username}
+                                        size="sm"
+                                    />
+                                    <h1 className="ml-4 font-semibold">
+                                        {reaction.user.username}
+                                    </h1>
+                                </div>
+                                {/* Display the reaction emoji */}
+                                {userReaction && (
+                                    <span className="text-2xl select-none">
+                                        {userReaction.emoji}
+                                    </span>
+                                )}
+                            </DropdownMenuItem>
+                        );
+                    })}
+                </DropdownMenuContent>
+            </DropdownMenu>
         </>
     );
 }

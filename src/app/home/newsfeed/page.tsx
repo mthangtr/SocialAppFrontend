@@ -23,7 +23,7 @@ export default function NewsFeed() {
     const query = searchParams.get('loggedIn');
     const router = useRouter();
 
-    const { data: postData, error, isLoading, isFetching } = useFetchPostsQuery({ page });
+    const { data: postData, error, isFetching } = useFetchPostsQuery({ page });
 
     useEffect(() => {
         if (query === 'true') {

@@ -28,6 +28,21 @@ export const postsSlice = apiSlice.injectEndpoints({
             }),
             providesTags: ["Post"],
         }),
+        updatePost: builder.mutation({
+            query: ({ postId, data }) => ({
+                url: `${POST_URL}/${postId}`,
+                method: 'PUT',
+                body: data,
+            }),
+            invalidatesTags: ["Post"],
+        }),
+        deletePost: builder.mutation({
+            query: ({ postId }) => ({
+                url: `${POST_URL}/${postId}`,
+                method: 'DELETE',
+            }),
+            invalidatesTags: ["Post"],
+        }),
     }),
 });
 
@@ -35,4 +50,6 @@ export const {
     useFetchPostsQuery,
     useCreatePostMutation,
     useReactToPostMutation,
+    useUpdatePostMutation,
+    useDeletePostMutation,
 } = postsSlice;

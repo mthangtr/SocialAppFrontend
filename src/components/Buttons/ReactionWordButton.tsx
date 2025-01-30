@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
 import 'tippy.js/animations/shift-away.css';
 import 'tippy.js/themes/material.css';
+import { CommentType, PostType, UserType } from '@/types/Global';
 
 const reactions = [
     { emoji: '👍', label: 'Like', color: '#1877f2' },
@@ -13,13 +14,20 @@ const reactions = [
     { emoji: '😡', label: 'Angry', color: '#d93f33' },
 ];
 
-const ReactionWordButton = ({ onReact }: { onReact: (reaction: string) => void }) => {
+const ReactionWordButton = ({ comment, onReact, user }: { comment: CommentType, onReact: (reaction: string) => void, user: UserType }) => {
     const [selectedReaction, setSelectedReaction] = useState<string | null>(null);
+
+    useEffect(() => {
+        const userReaction = comment?.reactions?.find(r => r.user._id === user._id);
+        if (userReaction) {
+            setSelectedReaction(userReaction.type);
+        }
+    }, [comment.reactions, user._id]);
 
     const handleReaction = (reaction: string) => {
         if (selectedReaction === reaction) {
             setSelectedReaction(null);
-            onReact('Like');
+            onReact('none');
         } else {
             setSelectedReaction(reaction);
             onReact(reaction);
@@ -29,7 +37,7 @@ const ReactionWordButton = ({ onReact }: { onReact: (reaction: string) => void }
     const handleButtonClick = () => {
         if (selectedReaction) {
             setSelectedReaction(null);
-            onReact('Like');
+            onReact('none');
         } else {
             setSelectedReaction('Like');
             onReact('Like');

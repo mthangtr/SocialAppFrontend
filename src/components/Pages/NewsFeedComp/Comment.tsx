@@ -4,11 +4,17 @@ import { Input } from "@/components/ui/inputShadcn";
 import { Button } from "@/components/ui/button";
 import { CommentType, UserType } from "@/types/Global";
 import { SendHorizontal } from "lucide-react";
-import ReactionWordButton from "@/components/Buttons/ReactionWordButton";
 import { TimeAgo } from "@/utils/FormatTime";
 import { useFetchRepliesForCommentQuery, useEditCommentMutation, useRemoveCommentMutation } from "@/libs/features/commentsSlice";
 import { Ellipsis } from 'lucide-react';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import CommentReactContainer from "./CommenReactContainer";
+import Tippy from '@tippyjs/react';
+import 'tippy.js/dist/tippy.css';
+import 'tippy.js/animations/shift-away.css';
+import 'tippy.js/themes/material.css';
+import dayjs from "dayjs";
+import CommentReactionsContainer from "./CommentReactionsContainer";
 
 interface ReplyCommentResponse {
     replies: CommentType[];
@@ -63,6 +69,7 @@ function Comment({
     }, [repliesData, pageReplies]);
 
     const handleToggleReplyInput = () => {
+        if (isEditing) return;
         setInputOpen((prev) => !prev);
         if (activeReplyId === commentData._id) {
             setActiveReplyId(null);
@@ -107,10 +114,10 @@ function Comment({
         }
     }
 
-    // Style "indent" cho replies
+    // Style "indent" for replies
     const indentLevel = depth < 2 ? `ml-10 pl-2` : ``;
     const borderDepth = depth < 2 ? `border-l` : ``;
-    const commentParrentClass = depth < 1 ? `pb-2` : `mt-2`;
+    const commentParrentClass = depth < 1 ? `` : `mt-2`;
 
     return (
         <div className={`flex flex-col ${commentParrentClass} `}>
@@ -155,19 +162,30 @@ function Comment({
                     </div>
                     {isEditing ? (
                         <Input
-                            className="mt-1"
+                            className=""
                             value={editContent}
                             onChange={(e) => setEditContent(e.target.value)}
                         />
                     ) : (
-                        <p className="text-sm mt-1 flex">{initContent}</p>
+                        <p className="text-sm flex">{initContent}</p>
                     )}
                     <div className="flex items-center justify-between">
                         <div className="flex items-center mt-2 gap-2">
-                            <p className="text-xs font-semibold text-gray-500 dark:text-white/50">
-                                {TimeAgo(commentData?.updatedAt.toString())}
-                            </p>
-                            <ReactionWordButton onReact={(reaction) => console.log(reaction)} />
+                            <Tippy
+                                className="shadow-lg rounded-lg"
+                                delay={200}
+                                interactive={true}
+                                placement="bottom-start"
+                                theme={'material'}
+                                arrow={false}
+                                animation={'shift-away'}
+                                content={dayjs(commentData?.updatedAt.toString()).format('MMMM D, YYYY h:mm A')}>
+                                <button className="text-xs font-semibold text-gray-500 dark:text-white/50 hover:underline select-none">
+                                    {TimeAgo(commentData?.updatedAt.toString())}
+                                </button>
+                            </Tippy>
+                            <CommentReactContainer comment={commentData} user={user} />
+                            {/* reply input of a comment */}
                             <button
                                 onClick={handleToggleReplyInput}
                                 className="text-xs font-semibold text-gray-500 dark:text-white/50 hover:underline select-none"
@@ -190,12 +208,18 @@ function Comment({
                                     Cancel
                                 </button>
                             </div>
-                        ) : null}
+                        ) : (
+                            <CommentReactionsContainer
+                                comment={commentData}
+                                currentUser={user}
+                                maxUsersToShow={5}
+                            />
+                        )}
                     </div>
                 </div>
             </div>
 
-            {/* Reply input */}
+            {/* Reply input of the modal */}
             {activeReplyId === commentData._id && inputOpen ? (
                 <div className="flex items-center mt-1 pb-2 ml-14 px-1">
                     <Avatar

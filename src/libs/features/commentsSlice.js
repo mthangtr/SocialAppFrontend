@@ -65,6 +65,16 @@ export const commentsSlice = apiSlice.injectEndpoints({
                 { type: "Comment", id: `COMMENT_${commentId}_REPLIES` },
             ],
         }),
+        reactToComment: builder.mutation({
+            query: ({ commentId, reaction }) => ({
+                url: `${COMMENT_URL}/${commentId}/react`,
+                method: "PATCH",
+                body: { reaction },
+            }),
+            invalidatesTags: (result, error, { commentId }) => [
+                { type: "Comment", id: `COMMENT_${commentId}_REPLIES` },
+            ],
+        }),
     }),
 });
 
@@ -76,4 +86,5 @@ export const {
     useRemoveCommentMutation,
     useGetTotalCommentsByPostIdQuery,
     useFetchRepliesForCommentQuery,
+    useReactToCommentMutation,
 } = commentsSlice;

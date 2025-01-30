@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from 'react';
 import { Avatar } from "@nextui-org/react";
-
+import { Button } from "@/components/ui/button";
 import type { PostType } from '@/types/Global';
 import { TimeAgo } from '@/utils/FormatTime';
 import { UserType } from '@/types/Global';
@@ -16,11 +16,23 @@ import {
 } from "@/components/ui/extension/carousel";
 import CommentContainer from './CommentContainer';
 import { Ellipsis } from 'lucide-react';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { useUpdatePostMutation, useDeletePostMutation } from '@/libs/features/postsSlice';
+import dayjs from 'dayjs';
+import Tippy from '@tippyjs/react';
+import 'tippy.js/dist/tippy.css';
+import 'tippy.js/animations/shift-away.css';
+import 'tippy.js/themes/material.css';
 
 export default function Post({ postsData, user }: { postsData: PostType, user: UserType }) {
     const [postData, setPostData] = useState<PostType | null>(postsData);
     const [showFullText, setShowFullText] = useState(false);
     const [showCarousel, setShowCarousel] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+    const [updatedText, setUpdatedText] = useState(postsData?.content);
+
+    const [updatePost, { isLoading: isUpdating, isError: isUpdateError, isSuccess: isUpdateSuccess, error: updateError }] = useUpdatePostMutation();
+    const [deletePost, { isLoading: isDeleting, isError: isDeleteError, isSuccess: isDeleteSuccess, error: deleteError }] = useDeletePostMutation();
 
     useEffect(() => {
         if (postData?.content?.length <= maxLength) {
@@ -31,6 +43,9 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
     const toggleShowMore = () => {
         setShowFullText(!showFullText);
     };
+
+    const handleEditPost = () => { };
+    const handleDeletePost = () => { };
 
     const text = postData?.content;
 
@@ -116,9 +131,44 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
                     <div className='flex justify-between w-full'>
                         <div>
                             <p className="font-semibold text-lg">{postData?.user?.username}</p>
-                            <p className="text-gray-500 text-sm dark:text-white/50 select-none">{TimeAgo(postData?.createdAt?.toString())}</p>
+                            <Tippy
+                                className="shadow-lg rounded-lg"
+                                delay={200}
+                                interactive={true}
+                                placement="right"
+                                theme={'material'}
+                                arrow={false}
+                                animation={'shift-away'}
+                                content={dayjs(postData?.updatedAt.toString()).format('MMMM D, YYYY h:mm A')}>
+                                <button className="text-xs font-semibold text-gray-500 dark:text-white/50 hover:underline select-none">
+                                    {TimeAgo(postData?.updatedAt.toString())}
+                                </button>
+                            </Tippy>
                         </div>
-                        <Ellipsis />
+                        <DropdownMenu>
+                            <DropdownMenuTrigger>
+                                <Button variant="ghost" size="icon">
+                                    <Ellipsis />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            {postsData?.user?._id === user?._id ? (
+                                <DropdownMenuContent align="end">
+                                    <DropdownMenuItem>
+                                        Edit
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                        className="text-red-500">
+                                        Delete
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            ) : (
+                                <DropdownMenuContent align="end">
+                                    <DropdownMenuItem>
+                                        Report
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            )}
+                        </DropdownMenu>
                     </div>
                 </div>
                 <p className="">{<PostTextContent text={displayText} />}

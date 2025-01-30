@@ -83,7 +83,7 @@ const ReactionButton = ({ post, onReact, user }: { post: PostType, onReact: (rea
         >
             <Button variant={"ghost"} className="flex items-center px-2 w-24 justify-center select-none" onClick={handleButtonClick}>
                 {typeof emoji === 'string' ? <span className='text-2xl'>{emoji}</span> : emoji}
-                <span className="ml-1" style={{ color: color }}>{selectedReaction ? selectedReaction : 'None'}</span>
+                <span className="ml-1" style={{ color: color }}>{selectedReaction ? selectedReaction : 'Like'}</span>
             </Button>
         </Tippy >
     );

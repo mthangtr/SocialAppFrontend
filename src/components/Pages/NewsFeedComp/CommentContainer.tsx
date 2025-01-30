@@ -13,7 +13,6 @@ import { Avatar } from "@nextui-org/react";
 import { Button } from "@/components/ui/button";
 import { useAppSelector, useAppDispatch } from '@/libs/hooks';
 import { closeModal } from '@/libs/features/modalSlice';
-import { BlockScolling } from "@/utils/BlockScrolling";
 import { X } from 'lucide-react';
 
 interface CommentsResponse {
@@ -42,18 +41,22 @@ function CommentContainer({
         dispatch(closeModal());
     };
 
-    const [createComment] = useCreateCommentMutation();
+    const [createComment, { isLoading: isCreating, isError: isCreateError, isSuccess: isCreateSuccess, error: createError }] = useCreateCommentMutation();
 
-    const { data: commentsData } = useFetchCommentsQuery(
+    const {
+        data: commentsData,
+        isFetching,
+        isLoading,
+        isError,
+        isSuccess,
+        error
+    } = useFetchCommentsQuery(
         { postId: postsData._id, page },
-        {
-            skip: !isOpen,
-        }
-    ) as { data: CommentsResponse };
+        { skip: !isOpen }
+    ) as { data: CommentsResponse, isFetching: boolean, isLoading: boolean, isError: any, isSuccess: boolean, error: any };
 
     useEffect(() => {
         if (isOpen) {
-            BlockScolling({ isOpen });
             if (commentsData?.comments) {
                 setComments((prev) => {
                     const existingIds = new Set(prev.map((comment) => comment._id));
@@ -148,7 +151,7 @@ function CommentContainer({
                                     <Dialog.Title className="text-lg font-medium flex items-center justify-between">
                                         <div></div>
                                         <div className="select-none font-semibold text-lg">
-                                            All Comments
+                                            Comments of {postsData?.user?.username}'s post
                                         </div>
                                         <Button
                                             onClick={closeModalHandler}
