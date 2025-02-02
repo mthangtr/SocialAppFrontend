@@ -7,7 +7,7 @@ import { Button } from "../ui/button";
 
 function RightSidebar() {
     return (
-        <div className="p-2 w-full h-full">
+        <div id="right-sidebar" className="p-2 w-full h-full">
             <div className="flex flex-col space-y-4">
                 <div className=" px-4 py-2 rounded-md">
                     <div className="flex justify-between">

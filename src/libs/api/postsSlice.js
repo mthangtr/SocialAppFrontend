@@ -1,7 +1,7 @@
-import { apiSlice } from "./apiSlice";
+import { apiSliceConfig } from "./apiSliceConfig";
 import { POST_URL } from "./constrants";
 
-export const postsSlice = apiSlice.injectEndpoints({
+export const postsSlice = apiSliceConfig.injectEndpoints({
     endpoints: (builder) => ({
         fetchPosts: builder.query({
             query: ({ page }) => ({

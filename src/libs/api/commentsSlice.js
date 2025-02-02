@@ -1,7 +1,7 @@
-import { apiSlice } from "./apiSlice";
+import { apiSliceConfig } from "./apiSliceConfig";
 import { COMMENT_URL } from "./constrants";
 
-export const commentsSlice = apiSlice.injectEndpoints({
+export const commentsSlice = apiSliceConfig.injectEndpoints({
     endpoints: (builder) => ({
         fetchComments: builder.query({
             query: ({ postId, page }) => ({

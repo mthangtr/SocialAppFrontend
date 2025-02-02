@@ -5,9 +5,9 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ModeToggle from "@/components/Buttons/ThemeToggle";
 import { useAppDispatch } from "@/libs/hooks";
-import { setCredentials } from "@/libs/features/auth/authSlice";
+import { setCredentials } from "@/libs/api/auth/authSlice";
 import { Input } from "@/components/ui/inputShadcn";
-import { useLoginMutation } from "@/libs/features/auth/logresSlice";
+import { useLoginMutation } from "@/libs/api/auth/logresSlice";
 import { Spinner } from '@nextui-org/react';
 
 function Login() {
@@ -62,7 +62,7 @@ function Login() {
 
             if (sessionToken) {
                 dispatch(setCredentials(user));
-                router.push("/home/newsfeed?loggedIn=true");
+                router.push("/home?loggedIn=true");
             } else {
                 toast.error("Invalid login response");
                 setIsButtonDisabled(false);

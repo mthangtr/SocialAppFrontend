@@ -3,12 +3,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Avatar } from "@nextui-org/react";
 import { Input } from "@/components/ui/inputShadcn";
 import { Dialog, Textarea, Transition } from '@headlessui/react';
-import { Button } from "../../ui/button";
+import { Button } from "../../../ui/button";
 import { Upload } from 'lucide-react';
 import { UserType } from "@/types/Global";
 import {
     useCreatePostMutation
-} from '@/libs/features/postsSlice';
+} from '@/libs/api/postsSlice';
 import { ToastContainer, toast } from 'react-toastify';
 
 function InputStatus({ user, onPostCreated }: { user: UserType, onPostCreated: (post: any) => void }) {

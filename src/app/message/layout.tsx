@@ -7,7 +7,7 @@ function MessagePageLayout({ children }: { children: React.ReactNode }) {
     return (
         <Providers>
             <main className="">
-
+                {children}
             </main>
         </Providers>
     );

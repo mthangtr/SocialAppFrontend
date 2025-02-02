@@ -1,6 +1,6 @@
 "use client";
-import InputStatus from '@/components/Pages/NewsFeedComp/InputStatus';
-import Post from '@/components/Pages/NewsFeedComp/Posts';
+import InputStatus from '@/components/Pages/NewsFeedComp/PostComponents/InputStatus';
+import Post from '@/components/Pages/NewsFeedComp/PostComponents/Posts';
 import { PostType } from '@/types/Global';
 import { useState, useEffect } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -8,10 +8,10 @@ import { Spinner } from "@nextui-org/react";
 import { UserType } from '@/types/Global';
 import {
     useFetchPostsQuery
-} from '@/libs/features/postsSlice';
+} from '@/libs/api/postsSlice';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
-import NewPostContainer from '@/components/Pages/NewsFeedComp/NewPostContainer';
+import NewPostContainer from '@/components/Pages/NewsFeedComp/PostComponents/NewPostContainer';
 
 export default function NewsFeed() {
     const [posts, setPosts] = useState<PostType[]>([]);

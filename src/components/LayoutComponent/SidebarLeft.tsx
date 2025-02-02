@@ -9,10 +9,10 @@ import {
 import PeopleIcon from '@mui/icons-material/People';
 import GroupsIcon from '@mui/icons-material/Groups';
 import FeedIcon from '@mui/icons-material/Feed';
-import SendIcon from '@mui/icons-material/Send';
 import { Button } from "../ui/button";
 import { UserType } from "@/types/Global";
 import { MessageCircleMore } from 'lucide-react';
+import Link from "next/link";
 
 function LefttSidebar() {
     const [user, setUser] = useState<UserType | null>(null);
@@ -34,23 +34,31 @@ function LefttSidebar() {
                 </Avatar>
                 <h1 className="ml-4 text-xl font-semibold">{user?.username}</h1>
             </Button>
-            <div className="space-y-4">
-                <Button variant={"ghost"} className="flex justify-start px-2 py-6 cursor-pointer w-full">
-                    <PeopleIcon className="ml-1" />
-                    <h1 className="ml-4 text-lg font-medium">Friends</h1>
-                </Button>
-                <Button variant={"ghost"} className="flex justify-start px-2 py-6 cursor-pointer w-full">
-                    <GroupsIcon className="ml-1" />
-                    <h1 className="ml-4 text-lg font-medium">Groups</h1>
-                </Button>
-                <Button variant={"ghost"} className="flex justify-start px-2 py-6 cursor-pointer w-full">
-                    <FeedIcon className="ml-1" />
-                    <h1 className="ml-4 text-lg font-medium">Feeds</h1>
-                </Button>
-                <Button variant={"ghost"} className="flex justify-start px-2 py-6 cursor-pointer w-full">
-                    <MessageCircleMore className="ml-1" />
-                    <h1 className="ml-4 text-lg font-medium">Messages</h1>
-                </Button>
+            <div className="flex flex-col gap-2">
+                <Link href="/connect">
+                    <Button variant={"ghost"} className="flex justify-start px-2 py-6 cursor-pointer w-full">
+                        <PeopleIcon className="ml-1" />
+                        <h1 className="ml-4 text-lg font-medium">Friends</h1>
+                    </Button>
+                </Link>
+                <Link href="/profile">
+                    <Button variant={"ghost"} className="flex justify-start px-2 py-6 cursor-pointer w-full">
+                        <GroupsIcon className="ml-1" />
+                        <h1 className="ml-4 text-lg font-medium">Profile</h1>
+                    </Button>
+                </Link>
+                <Link href="/home">
+                    <Button variant={"ghost"} className="flex justify-start px-2 py-6 cursor-pointer w-full">
+                        <FeedIcon className="ml-1" />
+                        <h1 className="ml-4 text-lg font-medium">Feeds</h1>
+                    </Button>
+                </Link>
+                <Link href="/message">
+                    <Button variant={"ghost"} className="flex justify-start px-2 py-6 cursor-pointer w-full">
+                        <MessageCircleMore className="ml-1" />
+                        <h1 className="ml-4 text-lg font-medium">Messages</h1>
+                    </Button>
+                </Link>
             </div>
         </div>
     );

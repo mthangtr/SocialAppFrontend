@@ -1,5 +1,5 @@
 import { fetchBaseQuery, createApi } from "@reduxjs/toolkit/query/react";
-import { BASE_URL } from "../features/constrants";
+import { BASE_URL } from "./constrants";
 
 const baseQuery = fetchBaseQuery({
     baseUrl: BASE_URL,
@@ -10,7 +10,7 @@ const baseQuery = fetchBaseQuery({
     }
 });
 
-export const apiSlice = createApi({
+export const apiSliceConfig = createApi({
     baseQuery,
     tagTypes: [
         "Post",

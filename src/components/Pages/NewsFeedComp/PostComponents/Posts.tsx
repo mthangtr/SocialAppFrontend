@@ -14,10 +14,10 @@ import {
     SliderMainItem,
     SliderThumbItem,
 } from "@/components/ui/extension/carousel";
-import CommentContainer from './CommentContainer';
+import CommentContainer from '../CommentComponents/CommentContainer';
 import { Ellipsis } from 'lucide-react';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { useUpdatePostMutation, useDeletePostMutation } from '@/libs/features/postsSlice';
+import { useUpdatePostMutation, useDeletePostMutation } from '@/libs/api/postsSlice';
 import dayjs from 'dayjs';
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';

@@ -1,8 +1,8 @@
-import { apiSlice } from "../apiSlice";
-import { logout } from "../auth/authSlice";
+import { apiSliceConfig } from "../apiSliceConfig";
+import { logout } from "./authSlice";
 import { AUTH_URL } from "../constrants";
 
-export const logresSlice = apiSlice.injectEndpoints({
+export const logresSlice = apiSliceConfig.injectEndpoints({
     endpoints: (builder) => ({
         login: builder.mutation({
             query: (data) => ({

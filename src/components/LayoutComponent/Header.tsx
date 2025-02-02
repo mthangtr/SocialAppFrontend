@@ -23,7 +23,7 @@ import { LogOut } from 'lucide-react';
 import { UserType } from "@/types/Global";
 import {
     useLogoutMutation,
-} from "@/libs/features/auth/logresSlice";
+} from "@/libs/api/auth/logresSlice";
 import { useRouter } from "next/navigation";
 import { MessageCircleMore } from 'lucide-react';
 
@@ -41,6 +41,10 @@ function Header() {
         }
     };
 
+    const handleNavigate = (path: string) => {
+        router.push(path);
+    }
+
     return (
         <header className="bg-background px-4 py-2 border-b-2 shadow-md fixed top-0 z-10 w-full">
             <Menubar className="flex justify-between items-center space-x-4">
@@ -48,8 +52,12 @@ function Header() {
                     <Input type="search" placeholder="Search..." className="w-full max-w-xs" />
                 </div>
                 <div className="flex items-center space-x-4">
-                    <Button variant="outline" size="icon"><MessageCircleMore /></Button>
-                    <Button variant="outline" size="icon"><NotificationsIcon /></Button>
+                    <Button variant="outline" size="icon" onClick={() => handleNavigate("/message")}>
+                        <MessageCircleMore />
+                    </Button>
+                    <Button variant="outline" size="icon">
+                        <NotificationsIcon />
+                    </Button>
                     <MenubarMenu>
                         <MenubarTrigger>
                             <Avatar className="cursor-pointer">
@@ -59,12 +67,11 @@ function Header() {
                             </Avatar>
                         </MenubarTrigger>
                         <MenubarContent>
+                            <MenubarItem>Profile</MenubarItem>
+                            <MenubarSeparator />
                             <MenubarItem>
                                 Theme: <MenubarShortcut><ModeToggle /></MenubarShortcut>
                             </MenubarItem>
-                            <MenubarItem>New Window</MenubarItem>
-                            <MenubarSeparator />
-                            <MenubarItem>Share</MenubarItem>
                             <MenubarSeparator />
                             <MenubarItem onClick={() => handleLogOut()} className="flex justify-between items-center">
                                 Log out<LogOut size={16} />

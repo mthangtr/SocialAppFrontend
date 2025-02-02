@@ -6,13 +6,13 @@ import { useState, Fragment, useEffect, useRef } from "react";
 import {
     useFetchCommentsQuery,
     useCreateCommentMutation,
-} from "@/libs/features/commentsSlice";
+} from "@/libs/api/commentsSlice";
 import { SendHorizontal } from "lucide-react";
 import { Input } from "@/components/ui/inputShadcn";
 import { Avatar } from "@nextui-org/react";
 import { Button } from "@/components/ui/button";
 import { useAppSelector, useAppDispatch } from '@/libs/hooks';
-import { closeModal } from '@/libs/features/modalSlice';
+import { closeModal } from '@/libs/api/modalSlice';
 import { X } from 'lucide-react';
 
 interface CommentsResponse {
@@ -166,7 +166,7 @@ function CommentContainer({
                                         {comments.length > 0 ? (comments.map((comment) => (
                                             <Comment
                                                 key={comment._id}
-                                                commentData={comment}
+                                                commentDataInit={comment}
                                                 user={user}
                                                 onReply={handleSendReply}
                                                 activeReplyId={activeReplyId}

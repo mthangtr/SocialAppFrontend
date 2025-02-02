@@ -5,19 +5,19 @@ export async function middleware(request: NextRequest) {
     try {
         const sessionToken = request.cookies.get('sessionToken');
 
+        if (!sessionToken) {
+            return NextResponse.redirect(new URL('/auth/login', request.url));
+        }
+
         if (request.nextUrl.pathname.startsWith('/auth')) {
             return NextResponse.next();
         }
 
         config.matcher.forEach((path) => {
             if (!request.nextUrl.pathname.startsWith(path)) {
-                return NextResponse.redirect(new URL('/home/newsfeed', request.url));
+                return NextResponse.redirect(new URL('/home', request.url));
             }
         });
-
-        if (!sessionToken) {
-            return NextResponse.redirect(new URL('/auth/login', request.url));
-        }
 
         const response = await fetch('http://localhost:8080/auth/check-session', {
             method: 'POST',
@@ -39,5 +39,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/', '/home/newsfeed', '/home/profile', '/post-detail', '/home/friend-suggestion'],
+    matcher: ['/', '/home', '/profile', '/post-detail', '/friend-suggestion', '/message'],
 };

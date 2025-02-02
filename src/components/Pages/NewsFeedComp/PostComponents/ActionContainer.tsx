@@ -1,7 +1,7 @@
 import type { PostType } from '@/types/Global';
 import { UserType } from '@/types/Global';
 import { useState } from 'react';
-import { useReactToPostMutation } from '@/libs/features/postsSlice';
+import { useReactToPostMutation } from '@/libs/api/postsSlice';
 import ReactionButton from "@/components/Buttons/ReactionButton"
 import ReactionModal from './ReactionModal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -9,9 +9,9 @@ import { faMessage, faShareFromSquare } from '@fortawesome/free-regular-svg-icon
 import { Button } from "@/components/ui/button";
 import {
     useGetTotalCommentsByPostIdQuery
-} from '@/libs/features/commentsSlice';
+} from '@/libs/api/commentsSlice';
 import { useAppDispatch } from '@/libs/hooks';
-import { openModal } from '@/libs/features/modalSlice';
+import { openModal } from '@/libs/api/modalSlice';
 
 function ActionContainer({ postsData, user }: { postsData: PostType, user: UserType }) {
     const [postData, setPostData] = useState<PostType | null>(postsData);

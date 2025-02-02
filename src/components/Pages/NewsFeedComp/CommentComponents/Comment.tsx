@@ -5,37 +5,38 @@ import { Button } from "@/components/ui/button";
 import { CommentType, UserType } from "@/types/Global";
 import { SendHorizontal } from "lucide-react";
 import { TimeAgo } from "@/utils/FormatTime";
-import { useFetchRepliesForCommentQuery, useEditCommentMutation, useRemoveCommentMutation } from "@/libs/features/commentsSlice";
+import { useFetchRepliesForCommentQuery, useEditCommentMutation, useRemoveCommentMutation, useReactToCommentMutation } from "@/libs/api/commentsSlice";
 import { Ellipsis } from 'lucide-react';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import CommentReactContainer from "./CommenReactContainer";
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
 import 'tippy.js/animations/shift-away.css';
 import 'tippy.js/themes/material.css';
 import dayjs from "dayjs";
-import CommentReactionsContainer from "./CommentReactionsContainer";
-
+import CommentReactionsDropdown from "./CommentReactionsDropdown";
+import { toast } from "react-toastify";
+import ReactionWordButton from "@/components/Buttons/ReactionWordButton";
 interface ReplyCommentResponse {
     replies: CommentType[];
     hasMoreReplies: boolean;
 }
 
 function Comment({
-    commentData,
+    commentDataInit,
     user,
     onReply,
     activeReplyId,
     setActiveReplyId,
     depth = 0,
 }: {
-    commentData: CommentType;
+    commentDataInit: CommentType;
     user: UserType
     onReply: (parentId: string, content: string) => Promise<CommentType>;
     activeReplyId: string | null;
     setActiveReplyId: (id: string | null) => void;
     depth?: number;
 }) {
+    const [commentData, setCommentData] = useState<CommentType>(commentDataInit);
     const [inputOpen, setInputOpen] = useState(false);
     const [replyText, setReplyText] = useState("");
     const [replies, setReplies] = useState<CommentType[]>([]);
@@ -52,8 +53,9 @@ function Comment({
         commentId: commentData._id,
         page: pageReplies
     }) as { data: ReplyCommentResponse };
-    const [editComment] = useEditCommentMutation();
-    const [removeComment] = useRemoveCommentMutation();
+    const [editComment, { isLoading: isSendingEdit, isError: isSendingEditError, isSuccess: isSendingEditSuccess, error: sendingEditError }] = useEditCommentMutation();
+    const [removeComment, { isLoading: isRemovingComment, isError: isRemovingCommentError, isSuccess: isRemovingCommentSuccess, error: removingCommentError }] = useRemoveCommentMutation();
+    const [reactToComment, { isLoading: isReacting, isError: isReactingError, isSuccess: isReactingSuccess, error: reactingError }] = useReactToCommentMutation();
 
     useEffect(() => {
         if (repliesData) {
@@ -98,7 +100,13 @@ function Comment({
     const handleSendEditComment = async (replyId: string, content: string) => {
         try {
             const updatedReply = await editComment({ id: replyId, content }).unwrap();
-            setInitContent(updatedReply?.content);
+            if (isSendingEditError) {
+                toast.error("Failed to edit reply");
+                setInitContent(commentData?.content);
+            } else if (isSendingEditSuccess) {
+                toast.success("Reply edited successfully");
+                setInitContent(updatedReply?.content);
+            }
             setIsEditing(false);
         } catch (error) {
             console.error("Failed to edit reply:", error);
@@ -108,11 +116,30 @@ function Comment({
     const handleRemoveComment = async (replyId: string) => {
         try {
             await removeComment(replyId).unwrap();
-            setReplies((prev) => prev.filter((reply) => reply._id !== replyId));
+            if (isRemovingCommentError) {
+                toast.error("Failed to delete reply");
+            } else if (isRemovingCommentSuccess) {
+                toast.success("Reply delete successfully");
+                setReplies((prev) => prev.filter((reply) => reply._id !== replyId));
+            }
         } catch (error) {
             console.error("Failed to remove reply:", error);
         }
     }
+
+    const handleSendReaction = async (reaction: string) => {
+        if (!commentData?._id) return;
+        try {
+            const updatedComment = await reactToComment({
+                commentId: commentData._id,
+                reaction,
+            }).unwrap();
+
+            setCommentData(updatedComment);
+        } catch (error) {
+            console.error("Error updating reaction:", error);
+        }
+    };
 
     // Style "indent" for replies
     const indentLevel = depth < 2 ? `ml-10 pl-2` : ``;
@@ -184,8 +211,12 @@ function Comment({
                                     {TimeAgo(commentData?.updatedAt.toString())}
                                 </button>
                             </Tippy>
-                            <CommentReactContainer comment={commentData} user={user} />
-                            {/* reply input of a comment */}
+                            <ReactionWordButton
+                                comment={commentData}
+                                onReact={handleSendReaction}
+                                user={user}
+                            />
+                            {/* The reply button to toggle the reply input on or off */}
                             <button
                                 onClick={handleToggleReplyInput}
                                 className="text-xs font-semibold text-gray-500 dark:text-white/50 hover:underline select-none"
@@ -193,6 +224,8 @@ function Comment({
                                 Reply
                             </button>
                         </div>
+                        {/* In the editting mode, the save and cancel editing mode buttons gonna be showed up, if not
+                        this area gonna show the button to open the comment reactions container */}
                         {isEditing ? (
                             <div className="flex items-center mt-2 gap-2">
                                 {initContent != editContent && <button
@@ -209,7 +242,7 @@ function Comment({
                                 </button>
                             </div>
                         ) : (
-                            <CommentReactionsContainer
+                            <CommentReactionsDropdown
                                 comment={commentData}
                                 currentUser={user}
                                 maxUsersToShow={5}
@@ -218,8 +251,7 @@ function Comment({
                     </div>
                 </div>
             </div>
-
-            {/* Reply input of the modal */}
+            {/* Reply input of the comment modal which is for parent comments. */}
             {activeReplyId === commentData._id && inputOpen ? (
                 <div className="flex items-center mt-1 pb-2 ml-14 px-1">
                     <Avatar
@@ -243,15 +275,14 @@ function Comment({
                     </Button>
                 </div>
             ) : null}
-
-            {/* Replies section */}
+            {/* To list all the replies based on parent comments */}
             {commentData.children?.length > 0 &&
                 <div className={` ${indentLevel} ${borderDepth}`}>
                     {replies.map((reply) => (
                         <Comment
                             key={reply._id}
                             user={user}
-                            commentData={reply}
+                            commentDataInit={reply}
                             onReply={onReply}
                             activeReplyId={activeReplyId}
                             setActiveReplyId={setActiveReplyId}
