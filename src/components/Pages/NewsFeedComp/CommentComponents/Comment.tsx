@@ -20,22 +20,16 @@ interface ReplyCommentResponse {
     replies: CommentType[];
     hasMoreReplies: boolean;
 }
-
-function Comment({
-    commentDataInit,
-    user,
-    onReply,
-    activeReplyId,
-    setActiveReplyId,
-    depth = 0,
-}: {
+interface CommentProps {
     commentDataInit: CommentType;
-    user: UserType
+    user: UserType;
     onReply: (parentId: string, content: string) => Promise<CommentType>;
     activeReplyId: string | null;
     setActiveReplyId: (id: string | null) => void;
     depth?: number;
-}) {
+    isCreateLoading?: boolean;
+}
+const Comment: React.FC<CommentProps> = ({ commentDataInit, user, onReply, activeReplyId, setActiveReplyId, depth = 0, isCreateLoading }) => {
     const [commentData, setCommentData] = useState<CommentType>(commentDataInit);
     const [inputOpen, setInputOpen] = useState(false);
     const [replyText, setReplyText] = useState("");
@@ -43,6 +37,7 @@ function Comment({
     const [hasMoreReplies, setHasMoreReplies] = useState(false);
     const [pageReplies, setPageReplies] = useState(1);
     const [initContent, setInitContent] = useState(commentData?.content);
+    const [isDeleted, setIsDeleted] = useState(false);
 
     //EDIT State
     const [isEditing, setIsEditing] = useState(false);
@@ -71,7 +66,6 @@ function Comment({
     }, [repliesData, pageReplies]);
 
     const handleToggleReplyInput = () => {
-        if (isEditing) return;
         setInputOpen((prev) => !prev);
         if (activeReplyId === commentData._id) {
             setActiveReplyId(null);
@@ -86,6 +80,8 @@ function Comment({
             const newReply = await onReply(commentData._id, replyText.trim());
             setReplies((prev) => [newReply, ...prev]);
             setReplyText("");
+            setInputOpen(false);
+            setActiveReplyId(null);
         } catch (error) {
             console.error("Failed to send reply:", error);
         }
@@ -100,12 +96,12 @@ function Comment({
     const handleSendEditComment = async (replyId: string, content: string) => {
         try {
             const updatedReply = await editComment({ id: replyId, content }).unwrap();
-            if (isSendingEditError) {
-                toast.error("Failed to edit reply");
-                setInitContent(commentData?.content);
-            } else if (isSendingEditSuccess) {
+            if (isSendingEditSuccess) {
                 toast.success("Reply edited successfully");
                 setInitContent(updatedReply?.content);
+            } else if (isSendingEditError) {
+                toast.error("Failed to edit reply");
+                setInitContent(commentData?.content);
             }
             setIsEditing(false);
         } catch (error) {
@@ -113,19 +109,17 @@ function Comment({
         }
     }
 
-    const handleRemoveComment = async (replyId: string) => {
+    const handleRemoveComment = async () => {
         try {
-            await removeComment(replyId).unwrap();
-            if (isRemovingCommentError) {
-                toast.error("Failed to delete reply");
-            } else if (isRemovingCommentSuccess) {
-                toast.success("Reply delete successfully");
-                setReplies((prev) => prev.filter((reply) => reply._id !== replyId));
-            }
+            await removeComment(commentData._id).unwrap();
+            toast.success("Comment deleted successfully");
+            // Đánh dấu comment bị xoá để không render component này nữa
+            setIsDeleted(true);
         } catch (error) {
-            console.error("Failed to remove reply:", error);
+            console.error("Failed to remove comment:", error);
+            toast.error("Failed to delete comment");
         }
-    }
+    };
 
     const handleSendReaction = async (reaction: string) => {
         if (!commentData?._id) return;
@@ -141,7 +135,10 @@ function Comment({
         }
     };
 
-    // Style "indent" for replies
+    // If the comment is deleted, return null -> don't render the component
+    if (isDeleted) return null;
+
+    // Style reply comments by indence for replies
     const indentLevel = depth < 2 ? `ml-10 pl-2` : ``;
     const borderDepth = depth < 2 ? `border-l` : ``;
     const commentParrentClass = depth < 1 ? `` : `mt-2`;
@@ -174,7 +171,7 @@ function Comment({
                                     </DropdownMenuItem>
                                     <DropdownMenuItem
                                         className="text-red-500"
-                                        onClick={() => handleRemoveComment(commentData?._id)}>
+                                        onClick={() => handleRemoveComment()}>
                                         Delete
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
@@ -187,6 +184,7 @@ function Comment({
                             )}
                         </DropdownMenu>
                     </div>
+                    {/* TextArea for editing mode */}
                     {isEditing ? (
                         <Input
                             className=""
@@ -251,8 +249,7 @@ function Comment({
                     </div>
                 </div>
             </div>
-            {/* Reply input of the comment modal which is for parent comments. */}
-            {activeReplyId === commentData._id && inputOpen ? (
+            {activeReplyId === commentData._id && inputOpen && !isEditing ? (
                 <div className="flex items-center mt-1 pb-2 ml-14 px-1">
                     <Avatar
                         src={user?.pfp || ""}
@@ -276,7 +273,7 @@ function Comment({
                 </div>
             ) : null}
             {/* To list all the replies based on parent comments */}
-            {commentData.children?.length > 0 &&
+            {(commentData.children?.length > 0 || replies.length > 0) &&
                 <div className={` ${indentLevel} ${borderDepth}`}>
                     {replies.map((reply) => (
                         <Comment

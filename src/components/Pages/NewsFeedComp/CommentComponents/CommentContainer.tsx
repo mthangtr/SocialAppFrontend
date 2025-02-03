@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { useAppSelector, useAppDispatch } from '@/libs/hooks';
 import { closeModal } from '@/libs/api/modalSlice';
 import { X } from 'lucide-react';
+import { toast } from "react-toastify";
 
 interface CommentsResponse {
     comments: CommentType[];
@@ -28,10 +29,10 @@ function CommentContainer({
     user: UserType;
 }) {
     const [page, setPage] = useState(1);
-    const [comments, setComments] = useState<CommentType[]>([]); // All comments
+    const [comments, setComments] = useState<CommentType[]>([]); // Array of parent comments
     const [hasMore, setHasMore] = useState(false); // Has more comments for pagination
-    const [commentText, setCommentText] = useState("");
-    const commentInputRef = useRef<HTMLInputElement>(null);
+    const [commentText, setCommentText] = useState(""); // Content of comment input
+    const commentInputRef = useRef<HTMLInputElement>(null); // Ref for comment input to focus
     const [activeReplyId, setActiveReplyId] = useState<string | null>(null); // Track active reply input
 
     const dispatch = useAppDispatch();
@@ -42,7 +43,6 @@ function CommentContainer({
     };
 
     const [createComment, { isLoading: isCreating, isError: isCreateError, isSuccess: isCreateSuccess, error: createError }] = useCreateCommentMutation();
-
     const {
         data: commentsData,
         isFetching,
@@ -78,14 +78,12 @@ function CommentContainer({
 
     const handleSendComment = async () => {
         if (!commentText.trim()) return;
-
         try {
             const newComment = await createComment({
                 content: commentText,
-                user: user?._id,
+                user: user._id,
                 post: postsData._id,
             }).unwrap();
-
             setComments((prev) => [newComment, ...prev]);
             setCommentText("");
             commentInputRef.current?.blur();
@@ -102,7 +100,6 @@ function CommentContainer({
                 post: postsData._id,
                 parent: parentId,
             }).unwrap();
-
             setComments((prev) =>
                 prev.map((comment) =>
                     comment._id === parentId
@@ -210,8 +207,6 @@ function CommentContainer({
                     </div>
                 </Dialog>
             </Transition>
-
-
         </>
     );
 }

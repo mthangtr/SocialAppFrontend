@@ -101,7 +101,7 @@ function InputStatus({ user, onPostCreated }: { user: UserType, onPostCreated: (
 
             {/* Modal để nhập status */}
             <Transition show={isModalOpen} as={React.Fragment}>
-                <Dialog open={isModalOpen} onClose={handleCloseModal} className="fixed z-10 inset-0 overflow-y-auto backdrop-blur-sm bg-white/30">
+                <Dialog open={isModalOpen} onClose={handleCloseModal} className="fixed z-10 inset-0 overflow-y-auto bg-black bg-opacity-30">
                     <div className="flex items-center justify-center min-h-screen">
                         <Transition.Child
                             as={React.Fragment}

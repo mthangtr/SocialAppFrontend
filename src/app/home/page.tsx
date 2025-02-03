@@ -28,7 +28,7 @@ export default function NewsFeed() {
     useEffect(() => {
         if (query === 'true') {
             toast.success("Logged out successfully");
-            router.replace("/home/newsfeed", undefined);
+            router.replace("/home", undefined);
         }
         const storedUser = localStorage.getItem("userInfo");
         if (storedUser) {

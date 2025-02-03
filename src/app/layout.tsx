@@ -18,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} bodyScroll overflow-y-scroll`} suppressHydrationWarning={true}>
+      <body className={`${inter.className} bodyScroll overflow-y-scroll`}>
         <StoreProvider>
           <ThemeProvider
             attribute="class"

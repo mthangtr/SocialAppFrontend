@@ -1,7 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from 'react';
 import { Avatar } from "@nextui-org/react";
-import { Button } from "@/components/ui/button";
 import type { PostType } from '@/types/Global';
 import { TimeAgo } from '@/utils/FormatTime';
 import { UserType } from '@/types/Global';
@@ -15,14 +14,15 @@ import {
     SliderThumbItem,
 } from "@/components/ui/extension/carousel";
 import CommentContainer from '../CommentComponents/CommentContainer';
-import { Ellipsis } from 'lucide-react';
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { useUpdatePostMutation, useDeletePostMutation } from '@/libs/api/postsSlice';
 import dayjs from 'dayjs';
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
 import 'tippy.js/animations/shift-away.css';
 import 'tippy.js/themes/material.css';
+import PostOptionDropdown from './PostOptionDropdown';
+import { Lock, Globe, Users } from 'lucide-react';
+
 
 export default function Post({ postsData, user }: { postsData: PostType, user: UserType }) {
     const [postData, setPostData] = useState<PostType | null>(postsData);
@@ -44,9 +44,6 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
         setShowFullText(!showFullText);
     };
 
-    const handleEditPost = () => { };
-    const handleDeletePost = () => { };
-
     const text = postData?.content;
 
     const maxLength = 300;
@@ -56,6 +53,22 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
 
     const handleImageClick = () => setShowCarousel(true);
     const handleCarouselClose = () => setShowCarousel(false);
+
+    const getPrivacyIcon = (privacy: string) => {
+        switch (privacy) {
+            case 'public':
+                return <Globe size={12} />;
+            case 'private':
+                return <Lock size={12} />;
+            case 'friends':
+                return <Users size={12} />;
+            default:
+                return <Globe size={12} />;
+        }
+    };
+
+    const handleEditPost = () => { };
+    const handleDeletePost = () => { };
 
     const renderImages = () => {
         if (!images || images.length === 0) {
@@ -129,46 +142,26 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
                 <div className="flex items-center mb-4">
                     <Avatar className="mr-4 select-none" src={`${postData?.user?.pfp?.toString()}`} size="md" />
                     <div className='flex justify-between w-full'>
-                        <div>
+                        <div className='flex flex-col items-start justify-center w-full'>
                             <p className="font-semibold text-lg">{postData?.user?.username}</p>
-                            <Tippy
-                                className="shadow-lg rounded-lg"
-                                delay={200}
-                                interactive={true}
-                                placement="right"
-                                theme={'material'}
-                                arrow={false}
-                                animation={'shift-away'}
-                                content={dayjs(postData?.updatedAt.toString()).format('MMMM D, YYYY h:mm A')}>
-                                <button className="text-xs font-semibold text-gray-500 dark:text-white/50 hover:underline select-none">
-                                    {TimeAgo(postData?.updatedAt.toString())}
-                                </button>
-                            </Tippy>
+                            <div className="flex items-center gap-2">
+                                {getPrivacyIcon(postData?.privacy)}
+                                <Tippy
+                                    className="shadow-lg rounded-lg"
+                                    delay={200}
+                                    interactive={true}
+                                    placement="right"
+                                    theme={'material'}
+                                    arrow={false}
+                                    animation={'shift-away'}
+                                    content={dayjs(postData?.updatedAt.toString()).format('MMMM D, YYYY h:mm A')}>
+                                    <button className="text-xs font-semibold text-gray-500 dark:text-white/50 hover:underline select-none">
+                                        {TimeAgo(postData?.updatedAt.toString())}
+                                    </button>
+                                </Tippy>
+                            </div>
                         </div>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger>
-                                <Button variant="ghost" size="icon">
-                                    <Ellipsis />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            {postsData?.user?._id === user?._id ? (
-                                <DropdownMenuContent align="end">
-                                    <DropdownMenuItem>
-                                        Edit
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem
-                                        className="text-red-500">
-                                        Delete
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            ) : (
-                                <DropdownMenuContent align="end">
-                                    <DropdownMenuItem>
-                                        Report
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            )}
-                        </DropdownMenu>
+                        <PostOptionDropdown postData={postData} user={user} />
                     </div>
                 </div>
                 <p className="">{<PostTextContent text={displayText} />}
