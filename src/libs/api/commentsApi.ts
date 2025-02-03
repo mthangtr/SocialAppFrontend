@@ -1,55 +1,47 @@
-import { apiSliceConfig } from "./apiSliceConfig";
-import { COMMENT_URL } from "./constrants";
+import { apiConfig } from './apiConfig';
+import { COMMENT_URL } from './constrants';
 
-export const commentsSlice = apiSliceConfig.injectEndpoints({
+export const commentsApi = apiConfig.injectEndpoints({
     endpoints: (builder) => ({
         fetchComments: builder.query({
             query: ({ postId, page }) => ({
                 url: `${COMMENT_URL}/${postId}?page=${page}`,
             }),
             transformResponse: (response) => response,
-            providesTags: (result, error, { postId }) => [
-                { type: "Comment", id: `POST_${postId}` },
-            ],
+            providesTags: (result, error, { postId }) => [{ type: 'Comment', id: `POST_${postId}` }],
         }),
         fetchOnly2Comments: builder.query({
             query: ({ postId }) => ({
                 url: `${COMMENT_URL}/${postId}/limit2`,
             }),
             transformResponse: (response) => response,
-            providesTags: (result, error, { postId }) => [
-                { type: "Comment", id: `POST_${postId}_LIMIT2` },
-            ],
+            providesTags: (result, error, { postId }) => [{ type: 'Comment', id: `POST_${postId}_LIMIT2` }],
         }),
         createComment: builder.mutation({
             query: (data) => ({
                 url: `${COMMENT_URL}`,
-                method: "POST",
+                method: 'POST',
                 body: data,
             }),
             invalidatesTags: (result, error, { postId }) => [
-                { type: "Comment", id: `POST_${postId}` },
-                { type: "Comment", id: `POST_${postId}_LIMIT2` },
+                { type: 'Comment', id: `POST_${postId}` },
+                { type: 'Comment', id: `POST_${postId}_LIMIT2` },
             ],
         }),
         editComment: builder.mutation({
             query: ({ id, ...data }) => ({
                 url: `${COMMENT_URL}/${id}`,
-                method: "PUT",
+                method: 'PUT',
                 body: data,
             }),
-            invalidatesTags: (result, error, { id }) => [
-                { type: "Comment", id },
-            ],
+            invalidatesTags: (result, error, { id }) => [{ type: 'Comment', id }],
         }),
         removeComment: builder.mutation({
             query: (id) => ({
                 url: `${COMMENT_URL}/${id}`,
-                method: "DELETE",
+                method: 'DELETE',
             }),
-            invalidatesTags: (result, error, { id }) => [
-                { type: "Comment", id },
-            ],
+            invalidatesTags: (result, error, { id }) => [{ type: 'Comment', id }],
         }),
         getTotalCommentsByPostId: builder.query({
             query: (postId) => ({
@@ -61,18 +53,16 @@ export const commentsSlice = apiSliceConfig.injectEndpoints({
                 url: `${COMMENT_URL}/${commentId}/replies?page=${page}`,
             }),
             transformResponse: (response) => response,
-            providesTags: (result, error, { commentId }) => [
-                { type: "Comment", id: `COMMENT_${commentId}_REPLIES` },
-            ],
+            providesTags: (result, error, { commentId }) => [{ type: 'Comment', id: `COMMENT_${commentId}_REPLIES` }],
         }),
         reactToComment: builder.mutation({
             query: ({ commentId, reaction }) => ({
                 url: `${COMMENT_URL}/${commentId}/react`,
-                method: "PATCH",
+                method: 'PATCH',
                 body: { reaction },
             }),
             invalidatesTags: (result, error, { commentId }) => [
-                { type: "Comment", id: `COMMENT_${commentId}_REPLIES` },
+                { type: 'Comment', id: `COMMENT_${commentId}_REPLIES` },
             ],
         }),
     }),
@@ -87,4 +77,4 @@ export const {
     useGetTotalCommentsByPostIdQuery,
     useFetchRepliesForCommentQuery,
     useReactToCommentMutation,
-} = commentsSlice;
+} = commentsApi;

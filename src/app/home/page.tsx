@@ -1,34 +1,34 @@
 "use client";
 import InputStatus from '@/components/Pages/NewsFeedComp/PostComponents/InputStatus';
 import Post from '@/components/Pages/NewsFeedComp/PostComponents/Posts';
-import { PostType } from '@/types/Global';
+import { PostType, UserType } from '@/types/Global';
 import { useState, useEffect } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Spinner } from "@nextui-org/react";
-import { UserType } from '@/types/Global';
-import {
-    useFetchPostsQuery
-} from '@/libs/api/postsSlice';
+import { useFetchPostsQuery } from '@/libs/api/postsApi';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
-import NewPostContainer from '@/components/Pages/NewsFeedComp/PostComponents/NewPostContainer';
+import { useAppDispatch, useAppSelector } from '@/libs/hooks';
+import { closeModal } from '@/libs/states/modalSlice';
 
 export default function NewsFeed() {
     const [posts, setPosts] = useState<PostType[]>([]);
-    const [newPost, setNewPost] = useState<PostType[]>([]);
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
     const [user, setUser] = useState<UserType | null>(null);
+
+    const dispatch = useAppDispatch();
+
     const searchParams = useSearchParams();
     const query = searchParams.get('loggedIn');
     const router = useRouter();
 
-    const { data: postData, error, isFetching } = useFetchPostsQuery({ page });
+    const { data: postData, error, isFetching } = useFetchPostsQuery({ page }) as { data: PostType[], error: any, isFetching: boolean };
 
     useEffect(() => {
         if (query === 'true') {
             toast.success("Logged out successfully");
-            router.replace("/home", undefined);
+            router.replace("/home");
         }
         const storedUser = localStorage.getItem("userInfo");
         if (storedUser) {
@@ -37,24 +37,23 @@ export default function NewsFeed() {
     }, []);
 
     useEffect(() => {
-        if (postData && (postData as PostType[]).length > 0) {
-            setPosts((prevPosts) => [...prevPosts, ...(postData as PostType[])]);
-        } else if (postData && (postData as PostType[]).length === 0) {
+        if (postData && postData.length > 0) {
+            setPosts(prevPosts => [...prevPosts, ...postData]);
+        } else if (postData && postData.length === 0) {
             setHasMore(false);
         }
     }, [postData]);
 
     const loadMorePosts = () => {
         if (!isFetching) {
-            setPage((prevPage) => prevPage + 1);
+            setPage(prevPage => prevPage + 1);
         }
     };
 
     const handlePostCreated = (newPost: PostType) => {
         toast.success("Post created successfully");
-        // const audio = new Audio('/assets/sounds/new-notification.mp3');
-        // audio.play().catch((error) => console.log('Error playing sound:', error));
-        setNewPost(prevPosts => [newPost, ...prevPosts]);
+        dispatch(closeModal());
+        setPosts(prev => [newPost, ...prev]);
     };
 
     if (error) {
@@ -63,11 +62,11 @@ export default function NewsFeed() {
 
     return (
         <div className="container mx-auto p-6">
+
+            {/* Input tạo post mới */}
             <InputStatus user={user} onPostCreated={handlePostCreated} />
-            <NewPostContainer
-                user={user}
-                postsData={newPost}
-            ></NewPostContainer>
+
+            {/* Infinite Scroll: posts (bao gồm post mới tạo) */}
             <InfiniteScroll
                 style={{ overflow: 'visible' }}
                 dataLength={posts.length}

@@ -1,26 +1,26 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
     userInfo: null,
 };
 
-if (typeof window !== "undefined" && localStorage.getItem("userInfo")) {
-    initialState.userInfo = JSON.parse(localStorage.getItem("userInfo"));
+if (typeof window !== 'undefined' && localStorage.getItem('userInfo')) {
+    initialState.userInfo = JSON.parse(localStorage.getItem('userInfo'));
 }
 
 const authSlice = createSlice({
-    name: "auth",
+    name: 'auth',
     initialState,
     reducers: {
         setCredentials: (state, action) => {
             state.userInfo = action.payload;
-            if (typeof window !== "undefined") {
-                localStorage.setItem("userInfo", JSON.stringify(action.payload));
+            if (typeof window !== 'undefined') {
+                localStorage.setItem('userInfo', JSON.stringify(action.payload));
             }
         },
         logout: (state) => {
             state.userInfo = null;
-            if (typeof window !== "undefined") {
+            if (typeof window !== 'undefined') {
                 localStorage.clear();
             }
         },

@@ -1,5 +1,6 @@
 "use client";
-import React, { useState, useEffect, useRef } from 'react';
+import { Fragment } from "react";
+import { useState, useEffect, useRef } from 'react';
 import { Avatar } from "@nextui-org/react";
 import { Input } from "@/components/ui/inputShadcn";
 import { Dialog, Textarea, Transition } from '@headlessui/react';
@@ -8,8 +9,9 @@ import { Upload } from 'lucide-react';
 import { UserType } from "@/types/Global";
 import {
     useCreatePostMutation
-} from '@/libs/api/postsSlice';
-import { ToastContainer, toast } from 'react-toastify';
+} from '@/libs/api/postsApi';
+import { useAppDispatch, useAppSelector } from '@/libs/hooks';
+import { closeModal } from '@/libs/states/modalSlice';
 
 function InputStatus({ user, onPostCreated }: { user: UserType, onPostCreated: (post: any) => void }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -19,14 +21,12 @@ function InputStatus({ user, onPostCreated }: { user: UserType, onPostCreated: (
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+    const dispatch = useAppDispatch();
+
     const [createPost, { isLoading, isSuccess, isError, error }] = useCreatePostMutation();
 
     const handleStatusClick = () => {
         setIsModalOpen(true);
-    };
-
-    const handleCloseModal = () => {
-        setIsModalOpen(false);
     };
 
     const handleStatusChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -61,7 +61,7 @@ function InputStatus({ user, onPostCreated }: { user: UserType, onPostCreated: (
 
         try {
             const response = await createPost(formData).unwrap();
-            console.log('Post created:', response);
+            dispatch(closeModal());
             if (response) {
                 onPostCreated(response);
             }
@@ -100,29 +100,11 @@ function InputStatus({ user, onPostCreated }: { user: UserType, onPostCreated: (
             </div>
 
             {/* Modal để nhập status */}
-            <Transition show={isModalOpen} as={React.Fragment}>
-                <Dialog open={isModalOpen} onClose={handleCloseModal} className="fixed z-10 inset-0 overflow-y-auto bg-black bg-opacity-30">
+            <Transition show={isModalOpen} as={Fragment}>
+                <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)} className="fixed z-10 inset-0 overflow-y-auto bg-black bg-opacity-30">
                     <div className="flex items-center justify-center min-h-screen">
                         <Transition.Child
-                            as={React.Fragment}
-                            enter="transition-opacity ease-linear duration-300"
-                            enterFrom="opacity-0"
-                            enterTo="opacity-100"
-                            leave="transition-opacity ease-linear duration-300"
-                            leaveFrom="opacity-100"
-                            leaveTo="opacity-0"
-                        >
-                            <div className="fixed inset-0 opacity-30" />
-                        </Transition.Child>
-
-                        <Transition.Child
-                            as={React.Fragment}
-                            enter="transition ease-out duration-300 transform"
-                            enterFrom="opacity-0 scale-95"
-                            enterTo="opacity-100 scale-100"
-                            leave="transition ease-in duration-200 transform"
-                            leaveFrom="opacity-100 scale-100"
-                            leaveTo="opacity-0 scale-95"
+                            as={Fragment}
                         >
                             <Dialog.Panel className="bg-background p-6 rounded-lg shadow-lg w-full max-w-3xl mx-auto z-20">
                                 <Dialog.Title className="text-lg font-semibold mb-4">Create Post</Dialog.Title>
@@ -154,7 +136,7 @@ function InputStatus({ user, onPostCreated }: { user: UserType, onPostCreated: (
                                     ))}
                                 </div>
                                 <div className="flex justify-end mt-4">
-                                    <Button variant={"ghost"} className="mr-2 px-4 py-2" onClick={handleCloseModal}>Cancel</Button>
+                                    <Button variant={"ghost"} className="mr-2 px-4 py-2" onClick={() => setIsModalOpen(false)}>Cancel</Button>
                                     <Button variant={"default"} onClick={handlePostStatus}>Post</Button>
                                 </div>
                             </Dialog.Panel>

@@ -5,13 +5,10 @@ import { Button } from "@/components/ui/button";
 import { CommentType, UserType } from "@/types/Global";
 import { SendHorizontal } from "lucide-react";
 import { TimeAgo } from "@/utils/FormatTime";
-import { useFetchRepliesForCommentQuery, useEditCommentMutation, useRemoveCommentMutation, useReactToCommentMutation } from "@/libs/api/commentsSlice";
+import { useFetchRepliesForCommentQuery, useEditCommentMutation, useRemoveCommentMutation, useReactToCommentMutation } from "@/libs/api/commentsApi";
 import { Ellipsis } from 'lucide-react';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import Tippy from '@tippyjs/react';
-import 'tippy.js/dist/tippy.css';
-import 'tippy.js/animations/shift-away.css';
-import 'tippy.js/themes/material.css';
 import dayjs from "dayjs";
 import CommentReactionsDropdown from "./CommentReactionsDropdown";
 import { toast } from "react-toastify";
@@ -96,13 +93,8 @@ const Comment: React.FC<CommentProps> = ({ commentDataInit, user, onReply, activ
     const handleSendEditComment = async (replyId: string, content: string) => {
         try {
             const updatedReply = await editComment({ id: replyId, content }).unwrap();
-            if (isSendingEditSuccess) {
-                toast.success("Reply edited successfully");
-                setInitContent(updatedReply?.content);
-            } else if (isSendingEditError) {
-                toast.error("Failed to edit reply");
-                setInitContent(commentData?.content);
-            }
+            toast.success("Reply edited successfully");
+            setInitContent(updatedReply?.content);
             setIsEditing(false);
         } catch (error) {
             console.error("Failed to edit reply:", error);

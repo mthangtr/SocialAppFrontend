@@ -51,23 +51,23 @@ const PostOptionDropdown: React.FC<PostOptionDropdownProps> = ({
     onReport,
     onChangePrivacy,
 }) => {
-    const isOwner = postData.user?._id === user?._id;
-    const privacyActions = getPrivacyActions(postData.privacy);
+    const isOwner = postData?.user?._id === user?._id;
+    const privacyActions = getPrivacyActions(postData?.privacy);
 
     const handleEdit = () => {
-        if (onEdit) onEdit(postData._id);
+        if (onEdit) onEdit(postData?._id);
     };
 
     const handleDelete = () => {
-        if (onDelete) onDelete(postData._id);
+        if (onDelete) onDelete(postData?._id);
     };
 
     const handleReport = () => {
-        if (onReport) onReport(postData._id);
+        if (onReport) onReport(postData?._id);
     };
 
     const handleChangePrivacy = (newPrivacy: string) => {
-        if (onChangePrivacy) onChangePrivacy(postData._id, newPrivacy);
+        if (onChangePrivacy) onChangePrivacy(postData?._id, newPrivacy);
     };
 
     return (

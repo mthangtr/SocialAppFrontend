@@ -1,6 +1,6 @@
 import React from 'react';
 
-function PostTextContent({ text }: { text: string }) {
+function PostTextContent({ text = "" }: { text?: string }) {
     const renderTextWithHashtags = (text: string) => {
         const hashtagRegex = /#(\w+)/g;
         const parts = text.split(hashtagRegex);

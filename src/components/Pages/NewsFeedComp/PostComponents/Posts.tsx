@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Avatar } from "@nextui-org/react";
 import type { PostType } from '@/types/Global';
 import { TimeAgo } from '@/utils/FormatTime';
@@ -14,7 +14,7 @@ import {
     SliderThumbItem,
 } from "@/components/ui/extension/carousel";
 import CommentContainer from '../CommentComponents/CommentContainer';
-import { useUpdatePostMutation, useDeletePostMutation } from '@/libs/api/postsSlice';
+import { useUpdatePostMutation, useDeletePostMutation } from '@/libs/api/postsApi';
 import dayjs from 'dayjs';
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
@@ -22,7 +22,9 @@ import 'tippy.js/animations/shift-away.css';
 import 'tippy.js/themes/material.css';
 import PostOptionDropdown from './PostOptionDropdown';
 import { Lock, Globe, Users } from 'lucide-react';
-
+import { toast } from 'react-toastify';
+import { useAppDispatch, useAppSelector } from '@/libs/hooks';
+import { closeModal } from '@/libs/states/modalSlice';
 
 export default function Post({ postsData, user }: { postsData: PostType, user: UserType }) {
     const [postData, setPostData] = useState<PostType | null>(postsData);
@@ -30,6 +32,9 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
     const [showCarousel, setShowCarousel] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [updatedText, setUpdatedText] = useState(postsData?.content);
+
+    const dispatch = useAppDispatch();
+    const { postId } = useAppSelector(state => state.modal);
 
     const [updatePost, { isLoading: isUpdating, isError: isUpdateError, isSuccess: isUpdateSuccess, error: updateError }] = useUpdatePostMutation();
     const [deletePost, { isLoading: isDeleting, isError: isDeleteError, isSuccess: isDeleteSuccess, error: deleteError }] = useDeletePostMutation();
@@ -39,6 +44,19 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
             setShowFullText(true);
         }
     }, [postData?.content?.length]);
+
+    const handleDeletePost = async (postId: string) => {
+        try {
+            await deletePost({ userId: user._id, postId }).unwrap();
+            toast.success("Post deleted successfully");
+            if (postId === postData?._id) {
+                dispatch(closeModal());
+            }
+            setPostData(null);
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     const toggleShowMore = () => {
         setShowFullText(!showFullText);
@@ -66,9 +84,6 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
                 return <Globe size={12} />;
         }
     };
-
-    const handleEditPost = () => { };
-    const handleDeletePost = () => { };
 
     const renderImages = () => {
         if (!images || images.length === 0) {
@@ -136,6 +151,8 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
         }
     };
 
+    if (!postData) return null;
+
     return (
         <>
             <div className="mt-8 border px-6 py-4 rounded-lg shadow-lg bg-background">
@@ -161,7 +178,7 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
                                 </Tippy>
                             </div>
                         </div>
-                        <PostOptionDropdown postData={postData} user={user} />
+                        <PostOptionDropdown postData={postData} user={user} onDelete={handleDeletePost} />
                     </div>
                 </div>
                 <p className="">{<PostTextContent text={displayText} />}
@@ -169,11 +186,9 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
                         {showFullText ? '' : "Show more"}
                     </button>
                 </p>
-
                 <div className='mt-4'>
                     {renderImages()}
                 </div>
-
                 {/* Carousel */}
                 {showCarousel && (
                     <div className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center">
@@ -200,15 +215,8 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
                         </Carousel>
                     </div>
                 )}
-
-                <div className="">
-                    <ActionContainer postsData={postData} user={user} />
-                </div>
-
-
-                <div className="">
-                    <CommentContainer postsData={postData} user={user} />
-                </div>
+                <ActionContainer postsData={postData} user={user} />
+                <CommentContainer postsData={postData} user={user} />
             </div>
         </>
     );

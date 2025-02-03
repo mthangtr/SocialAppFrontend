@@ -1,8 +1,8 @@
-import { apiSliceConfig } from "../apiSliceConfig";
-import { logout } from "./authSlice";
-import { AUTH_URL } from "../constrants";
+import { apiConfig } from '../apiConfig';
+import { logout } from '@/libs/states/authSlice';
+import { AUTH_URL } from '../constrants';
 
-export const logresSlice = apiSliceConfig.injectEndpoints({
+export const authenApi = apiConfig.injectEndpoints({
     endpoints: (builder) => ({
         login: builder.mutation({
             query: (data) => ({
@@ -10,7 +10,7 @@ export const logresSlice = apiSliceConfig.injectEndpoints({
                 method: 'POST',
                 body: data,
             }),
-            invalidatesTags: ["User"],
+            invalidatesTags: ['User'],
         }),
         logout: builder.mutation({
             query: () => ({
@@ -20,12 +20,9 @@ export const logresSlice = apiSliceConfig.injectEndpoints({
             onQueryStarted: async (_, { dispatch }) => {
                 dispatch(logout());
             },
-            invalidatesTags: ["User"],
+            invalidatesTags: ['User'],
         }),
     }),
 });
 
-export const {
-    useLoginMutation,
-    useLogoutMutation,
-} = logresSlice;
+export const { useLoginMutation, useLogoutMutation } = authenApi;

@@ -16,14 +16,13 @@ import {
 } from "@/components/ui/avatar";
 import { Button } from "../ui/button";
 import { Input } from "@/components/ui/inputShadcn";
-import SendIcon from '@mui/icons-material/Send';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import ModeToggle from "@/components/Buttons/ThemeToggle";
 import { LogOut } from 'lucide-react';
 import { UserType } from "@/types/Global";
 import {
     useLogoutMutation,
-} from "@/libs/api/auth/logresSlice";
+} from "@/libs/api/auth/authenApi";
 import { useRouter } from "next/navigation";
 import { MessageCircleMore } from 'lucide-react';
 

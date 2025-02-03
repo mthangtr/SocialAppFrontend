@@ -6,15 +6,14 @@ import { useState, Fragment, useEffect, useRef } from "react";
 import {
     useFetchCommentsQuery,
     useCreateCommentMutation,
-} from "@/libs/api/commentsSlice";
+} from "@/libs/api/commentsApi";
 import { SendHorizontal } from "lucide-react";
 import { Input } from "@/components/ui/inputShadcn";
 import { Avatar } from "@nextui-org/react";
 import { Button } from "@/components/ui/button";
 import { useAppSelector, useAppDispatch } from '@/libs/hooks';
-import { closeModal } from '@/libs/api/modalSlice';
+import { closeModal } from '@/libs/states/modalSlice';
 import { X } from 'lucide-react';
-import { toast } from "react-toastify";
 
 interface CommentsResponse {
     comments: CommentType[];
@@ -25,9 +24,10 @@ function CommentContainer({
     postsData,
     user,
 }: {
-    postsData: PostType;
-    user: UserType;
+    postsData?: PostType;
+    user?: UserType;
 }) {
+    if (!postsData) return null;
     const [page, setPage] = useState(1);
     const [comments, setComments] = useState<CommentType[]>([]); // Array of parent comments
     const [hasMore, setHasMore] = useState(false); // Has more comments for pagination
@@ -37,6 +37,7 @@ function CommentContainer({
 
     const dispatch = useAppDispatch();
     const { isOpen, postId } = useAppSelector((state) => state.modal);
+
 
     const closeModalHandler = () => {
         dispatch(closeModal());
@@ -113,36 +114,17 @@ function CommentContainer({
         }
     };
 
-    if (!postsData) return null;
     if (postId !== postsData._id) return null;
 
     return (
         <>
             {/* Modal for all comments */}
             <Transition appear show={isOpen} as={Fragment}>
-                <Dialog as="div" className="relative z-10" onClose={() => { }}>
-                    <Transition.Child
-                        as={Fragment}
-                        enter="ease-out duration-300"
-                        enterFrom="opacity-0"
-                        enterTo="opacity-100"
-                        leave="ease-in duration-200"
-                        leaveFrom="opacity-100"
-                        leaveTo="opacity-0"
-                    >
-                        <div className="fixed inset-0 bg-black bg-opacity-30" />
-                    </Transition.Child>
-
+                <Dialog as="div" className="fixed z-10 inset-0 bg-black bg-opacity-30" onClose={() => { }}>
                     <div className="fixed inset-0 overflow-y-auto">
                         <div className="flex items-center justify-center min-h-full p-4 text-center">
                             <Transition.Child
                                 as={Fragment}
-                                enter="ease-out duration-300"
-                                enterFrom="opacity-0 scale-95"
-                                enterTo="opacity-100 scale-100"
-                                leave="ease-in duration-200"
-                                leaveFrom="opacity-100 scale-100"
-                                leaveTo="opacity-0 scale-95"
                             >
                                 <Dialog.Panel className="w-full max-w-5xl p-6 bg-background rounded-2xl shadow-xl">
                                     <Dialog.Title className="text-lg font-medium flex items-center justify-between">
