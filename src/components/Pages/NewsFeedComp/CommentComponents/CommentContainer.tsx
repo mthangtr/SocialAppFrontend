@@ -121,7 +121,7 @@ function CommentContainer({
             {/* Modal for all comments */}
             <Transition appear show={isOpen} as={Fragment}>
                 <Dialog as="div" className="fixed z-10 inset-0 bg-black bg-opacity-30" onClose={() => { }}>
-                    <div className="fixed inset-0 overflow-y-auto">
+                    <div className="overflow-y-auto">
                         <div className="flex items-center justify-center min-h-full p-4 text-center">
                             <Transition.Child
                                 as={Fragment}

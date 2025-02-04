@@ -152,9 +152,7 @@ const Comment: React.FC<CommentProps> = ({ commentDataInit, user, onReply, activ
                         <p className="font-semibold text-sm flex">{commentData?.user?.username}</p>
                         <DropdownMenu>
                             <DropdownMenuTrigger>
-                                <Button variant="ghost" size="icon">
-                                    <Ellipsis />
-                                </Button>
+                                <Ellipsis />
                             </DropdownMenuTrigger>
                             {commentData?.user?._id === user?._id ? (
                                 <DropdownMenuContent align="end">

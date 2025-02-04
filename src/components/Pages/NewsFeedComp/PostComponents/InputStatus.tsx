@@ -89,7 +89,7 @@ function InputStatus({ user, onPostCreated }: { user: UserType, onPostCreated: (
         <>
             {/* Phần upload status */}
             <div className="border p-4 rounded-lg shadow-lg flex items-center">
-                <Avatar className="mr-4" src={`${user?.pfp}`} alt={`${user?.username}`} size="md" />
+                <Avatar className="mr-4" src={`${user?.pfp || "/assets/images/default.png"} `} alt={`${user?.username}`} size="md" />
                 <Input
                     onClick={handleStatusClick}
                     className="w-full border rounded-lg px-4 py-2 cursor-pointer bg-gray-100 dark:bg-[hsl(0,0%,20%)]"

@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import ModeToggle from "@/components/Buttons/ThemeToggle";
 import { useAppDispatch } from "@/libs/hooks";
 import { setCredentials } from "@/libs/states/authSlice";
@@ -105,7 +104,7 @@ function Login() {
                 <div className={` bg-gray-100-100 w-full rounded-lg shadow-lg border md:mt-0 sm:max-w-md xl:p-0`}>
                     {isLoading && (
                         <div className="absolute rounded-md inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-                            <Spinner /> {/* Display the Spinner */}
+                            <Spinner />
                         </div>
                     )}
                     <div className="p-6 space-y-4 md:space-y-6 sm:p-8">

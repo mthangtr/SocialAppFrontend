@@ -46,7 +46,7 @@ export const postsApi = apiConfig.injectEndpoints({
         setPrivacy: builder.mutation({
             query: ({ userId, postId, privacy }) => ({
                 url: `${POST_URL}/${userId}/${postId}/privacy`,
-                method: 'POST',
+                method: 'PATCH',
                 body: { privacy },
             }),
             invalidatesTags: ['Post'],

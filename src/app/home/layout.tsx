@@ -6,11 +6,10 @@ import Providers from "@/components/LayoutComponent/ProgressBarProvider";
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
-
 function HomeLayout({ children }: { children: React.ReactNode }) {
     return (
-        <Providers>
-            <main className="">
+        <main>
+            <Providers>
                 <Header />
                 <div className="flex">
                     <ToastContainer
@@ -31,8 +30,8 @@ function HomeLayout({ children }: { children: React.ReactNode }) {
                         </ScrollableComponent>
                     </div>
                 </div>
-            </main>
-        </Providers>
+            </Providers>
+        </main>
     );
 }
 

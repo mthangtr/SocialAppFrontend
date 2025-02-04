@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
-function useScroll(selector) {
+function useScroll(selector: string) {
     const [isScrolling, setIsScrolling] = useState(false);
 
     useEffect(() => {
-        let timer;
+        let timer: NodeJS.Timeout;
 
         const handleScroll = () => {
             setIsScrolling(true);

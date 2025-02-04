@@ -38,7 +38,12 @@ export default function NewsFeed() {
 
     useEffect(() => {
         if (postData && postData.length > 0) {
-            setPosts(prevPosts => [...prevPosts, ...postData]);
+            setPosts(prevPosts => {
+                const combined = [...prevPosts, ...postData];
+                const uniquePosts = Array.from(new Map(combined.map(item => [item._id, item])).values());
+                return uniquePosts;
+            });
+
         } else if (postData && postData.length === 0) {
             setHasMore(false);
         }

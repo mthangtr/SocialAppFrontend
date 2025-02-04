@@ -14,7 +14,7 @@ import {
     SliderThumbItem,
 } from "@/components/ui/extension/carousel";
 import CommentContainer from '../CommentComponents/CommentContainer';
-import { useUpdatePostMutation, useDeletePostMutation } from '@/libs/api/postsApi';
+import { useUpdatePostMutation, useDeletePostMutation, useSetPrivacyMutation } from '@/libs/api/postsApi';
 import dayjs from 'dayjs';
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
@@ -32,18 +32,24 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
     const [showCarousel, setShowCarousel] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [updatedText, setUpdatedText] = useState(postsData?.content);
+    const [privacy, setPrivacy] = useState(postsData?.privacy);
 
     const dispatch = useAppDispatch();
     const { postId } = useAppSelector(state => state.modal);
 
     const [updatePost, { isLoading: isUpdating, isError: isUpdateError, isSuccess: isUpdateSuccess, error: updateError }] = useUpdatePostMutation();
     const [deletePost, { isLoading: isDeleting, isError: isDeleteError, isSuccess: isDeleteSuccess, error: deleteError }] = useDeletePostMutation();
+    const [setPostPrivacy, { isLoading: isSettingPrivacy, isError: isSetPrivacyError, isSuccess: isSetPrivacySuccess, error: setPrivacyError }] = useSetPrivacyMutation();
 
     useEffect(() => {
         if (postData?.content?.length <= maxLength) {
             setShowFullText(true);
         }
     }, [postData?.content?.length]);
+
+    useEffect(() => {
+
+    }, [privacy]);
 
     const handleDeletePost = async (postId: string) => {
         try {
@@ -53,6 +59,15 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
                 dispatch(closeModal());
             }
             setPostData(null);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const handleChangePostPrivacy = async (newPrivacy: string) => {
+        try {
+            await setPostPrivacy({ userId: user._id, postId: postData?._id, privacy: newPrivacy }).unwrap();
+            setPostData(prev => prev ? { ...prev, privacy: newPrivacy } : null);
         } catch (error) {
             console.error(error);
         }
@@ -178,7 +193,7 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
                                 </Tippy>
                             </div>
                         </div>
-                        <PostOptionDropdown postData={postData} user={user} onDelete={handleDeletePost} />
+                        <PostOptionDropdown postData={postData} user={user} onDelete={handleDeletePost} onChangePrivacy={handleChangePostPrivacy} />
                     </div>
                 </div>
                 <p className="">{<PostTextContent text={displayText} />}

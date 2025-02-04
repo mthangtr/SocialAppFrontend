@@ -17,7 +17,7 @@ interface PostOptionDropdownProps {
     onEdit?: (postId: string) => void;
     onDelete?: (postId: string) => void;
     onReport?: (postId: string) => void;
-    onChangePrivacy?: (postId: string, newPrivacy: string) => void;
+    onChangePrivacy?: (newPrivacy: string) => void;
 }
 
 const getPrivacyActions = (currentPrivacy: string) => {
@@ -67,45 +67,40 @@ const PostOptionDropdown: React.FC<PostOptionDropdownProps> = ({
     };
 
     const handleChangePrivacy = (newPrivacy: string) => {
-        if (onChangePrivacy) onChangePrivacy(postData?._id, newPrivacy);
+        if (onChangePrivacy) onChangePrivacy(newPrivacy);
     };
 
     return (
         <DropdownMenu>
             <DropdownMenuTrigger>
-                <Button variant="ghost" size="icon">
-                    <Ellipsis />
-                </Button>
+                <Ellipsis />
             </DropdownMenuTrigger>
 
             {isOwner ? (
                 <DropdownMenuContent align="end">
-                    <DropdownMenuItem>
-                        <button
-                            onClick={handleEdit}>Edit</button>
+                    <DropdownMenuItem onClick={handleEdit}>
+                        Edit
                     </DropdownMenuItem>
                     <DropdownMenuItem
                         className="text-red-500"
+                        onClick={handleDelete}
                     >
-                        <button onClick={handleDelete}>
-                            Delete
-                        </button>
+                        Delete
                     </DropdownMenuItem>
 
                     {/* Privacy change options */}
                     {privacyActions.map(({ label, value }) => (
                         <DropdownMenuItem
                             key={value}
+                            onClick={() => handleChangePrivacy(value)}
                         >
-                            <button
-                                onClick={() => handleChangePrivacy(value)}>{label}</button>
+                            {label}
                         </DropdownMenuItem>
                     ))}
                 </DropdownMenuContent>
             ) : (
                 <DropdownMenuContent align="end">
-                    <DropdownMenuItem> <button
-                        onClick={handleReport}>Report</button></DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleReport}>Report</DropdownMenuItem>
                 </DropdownMenuContent>
             )}
         </DropdownMenu>

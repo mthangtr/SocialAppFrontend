@@ -1,11 +1,15 @@
+"use client";
 import {
     Avatar,
     AvatarFallback,
     AvatarImage,
 } from "@/components/ui/avatar"
 import { Button } from "../ui/button";
+import { UserType } from "@/types/Global";
+import { useState } from "react";
 
 function RightSidebar() {
+    const [user, setUser] = useState<UserType | null>(null);
     return (
         <div id="right-sidebar" className="p-2 w-full h-full">
             <div className="flex flex-col space-y-4">
@@ -19,7 +23,7 @@ function RightSidebar() {
                             <div className="flex items-center space-x-4 p-1">
                                 <Avatar className="cursor-pointer">
                                     <AvatarImage
-                                        src=""
+                                        src={user?.pfp || "/assets/images/default.png"}
                                         alt="@ThuongHuyen"
                                     />
                                     <AvatarFallback>TH</AvatarFallback>
@@ -38,7 +42,7 @@ function RightSidebar() {
                             <div className="flex items-center space-x-4 p-1">
                                 <Avatar className="cursor-pointer">
                                     <AvatarImage
-                                        src=""
+                                        src={user?.pfp || "/assets/images/default.png"}
                                         alt="@ThuongHuyen"
                                     />
                                     <AvatarFallback>TH</AvatarFallback>
@@ -61,7 +65,7 @@ function RightSidebar() {
                         <li className="flex items-center space-x-2">
                             <Avatar className="cursor-pointer">
                                 <AvatarImage
-                                    src="https://github.com/shadcn.png" alt="@shadcn" />
+                                    src={user?.pfp || "/assets/images/default.png"} alt="@shadcn" />
                                 <AvatarFallback>CN</AvatarFallback>
                             </Avatar>
                             <div>
@@ -72,7 +76,7 @@ function RightSidebar() {
                         <li className="flex items-center space-x-2">
                             <Avatar className="cursor-pointer">
                                 <AvatarImage
-                                    src="https://github.com/shadcn.png" alt="@shadcn" />
+                                    src={user?.pfp || "/assets/images/default.png"} alt="@shadcn" />
                                 <AvatarFallback>CN</AvatarFallback>
                             </Avatar>
                             <div>
@@ -83,7 +87,7 @@ function RightSidebar() {
                         <li className="flex items-center space-x-2">
                             <Avatar className="cursor-pointer">
                                 <AvatarImage
-                                    src="https://github.com/shadcn.png" alt="@shadcn" />
+                                    src={user?.pfp || "/assets/images/default.png"} alt="@shadcn" />
                                 <AvatarFallback>CN</AvatarFallback>
                             </Avatar>
                             <div>
@@ -94,7 +98,7 @@ function RightSidebar() {
                         <li className="flex items-center space-x-2">
                             <Avatar className="cursor-pointer">
                                 <AvatarImage
-                                    src="https://github.com/shadcn.png" alt="@shadcn" />
+                                    src={user?.pfp || "/assets/images/default.png"} alt="@shadcn" />
                                 <AvatarFallback>CN</AvatarFallback>
                             </Avatar>
                             <div>
@@ -105,7 +109,7 @@ function RightSidebar() {
                         <li className="flex items-center space-x-2">
                             <Avatar className="cursor-pointer">
                                 <AvatarImage
-                                    src="https://github.com/shadcn.png" alt="@shadcn" />
+                                    src={user?.pfp || "/assets/images/default.png"} alt="@shadcn" />
                                 <AvatarFallback>CN</AvatarFallback>
                             </Avatar>
                             <div>
@@ -116,7 +120,7 @@ function RightSidebar() {
                         <li className="flex items-center space-x-2">
                             <Avatar className="cursor-pointer">
                                 <AvatarImage
-                                    src="https://github.com/shadcn.png" alt="@shadcn" />
+                                    src={user?.pfp || "/assets/images/default.png"} alt="@shadcn" />
                                 <AvatarFallback>CN</AvatarFallback>
                             </Avatar>
                             <div>
@@ -127,7 +131,7 @@ function RightSidebar() {
                         <li className="flex items-center space-x-2">
                             <Avatar className="cursor-pointer">
                                 <AvatarImage
-                                    src="https://github.com/shadcn.png" alt="@shadcn" />
+                                    src={user?.pfp || "/assets/images/default.png"} alt="@shadcn" />
                                 <AvatarFallback>CN</AvatarFallback>
                             </Avatar>
                             <div>
@@ -138,7 +142,7 @@ function RightSidebar() {
                         <li className="flex items-center space-x-2">
                             <Avatar className="cursor-pointer">
                                 <AvatarImage
-                                    src="https://github.com/shadcn.png" alt="@shadcn" />
+                                    src={user?.pfp || "/assets/images/default.png"} alt="@shadcn" />
                                 <AvatarFallback>CN</AvatarFallback>
                             </Avatar>
                             <div>
@@ -149,7 +153,7 @@ function RightSidebar() {
                         <li className="flex items-center space-x-2">
                             <Avatar className="cursor-pointer">
                                 <AvatarImage
-                                    src="https://github.com/shadcn.png" alt="@shadcn" />
+                                    src={user?.pfp || "/assets/images/default.png"} alt="@shadcn" />
                                 <AvatarFallback>CN</AvatarFallback>
                             </Avatar>
                             <div>
@@ -160,7 +164,7 @@ function RightSidebar() {
                         <li className="flex items-center space-x-2">
                             <Avatar className="cursor-pointer">
                                 <AvatarImage
-                                    src="https://github.com/shadcn.png" alt="@shadcn" />
+                                    src={user?.pfp || "/assets/images/default.png"} alt="@shadcn" />
                                 <AvatarFallback>CN</AvatarFallback>
                             </Avatar>
                             <div>
