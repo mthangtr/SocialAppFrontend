@@ -14,7 +14,7 @@ import { PostType, UserType } from "@/types/Global";
 interface PostOptionDropdownProps {
     postData: PostType;
     user: UserType;
-    onEdit?: (postId: string) => void;
+    onToggleEdit?: () => void;
     onDelete?: (postId: string) => void;
     onReport?: (postId: string) => void;
     onChangePrivacy?: (newPrivacy: string) => void;
@@ -46,7 +46,7 @@ const getPrivacyActions = (currentPrivacy: string) => {
 const PostOptionDropdown: React.FC<PostOptionDropdownProps> = ({
     postData,
     user,
-    onEdit,
+    onToggleEdit,
     onDelete,
     onReport,
     onChangePrivacy,
@@ -55,7 +55,7 @@ const PostOptionDropdown: React.FC<PostOptionDropdownProps> = ({
     const privacyActions = getPrivacyActions(postData?.privacy);
 
     const handleEdit = () => {
-        if (onEdit) onEdit(postData?._id);
+        if (onToggleEdit) onToggleEdit();
     };
 
     const handleDelete = () => {

@@ -3,6 +3,8 @@ import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/ui/ThemeProvider";
 import "@/styles/globals.css";
 import StoreProvider from "./StoreProvider";
+import Providers from "@/components/LayoutComponent/ProgressBarProvider";
+import { HeaderWrapper } from "@/components/LayoutComponent/HeaderWrapper";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -28,7 +30,10 @@ export default function RootLayout({
             storageKey="theme"
             disableTransitionOnChange={true}
           >
-            {children}
+            <Providers>
+              <HeaderWrapper />
+              {children}
+            </Providers>
           </ThemeProvider>
         </StoreProvider>
       </body>

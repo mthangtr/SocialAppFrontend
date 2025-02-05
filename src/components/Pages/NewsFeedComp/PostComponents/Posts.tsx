@@ -25,6 +25,7 @@ import { Lock, Globe, Users } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { useAppDispatch, useAppSelector } from '@/libs/hooks';
 import { closeModal } from '@/libs/states/modalSlice';
+import { Textarea } from "@heroui/input";
 
 export default function Post({ postsData, user }: { postsData: PostType, user: UserType }) {
     const [postData, setPostData] = useState<PostType | null>(postsData);
@@ -73,11 +74,16 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
         }
     };
 
-    const toggleShowMore = () => {
-        setShowFullText(!showFullText);
+    const handleEditPost = async (postId: string) => {
+        try {
+            const updatedPost = await updatePost({ userId: user._id, postId, data: { content: updatedText } }).unwrap();
+            setPostData(updatedPost);
+        } catch (error) {
+            console.error(error);
+        }
     };
 
-    const text = postData?.content;
+    const text = updatedText;
 
     const maxLength = 300;
     const displayText = showFullText ? text : text?.substring(0, maxLength) + '...';
@@ -193,14 +199,36 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
                                 </Tippy>
                             </div>
                         </div>
-                        <PostOptionDropdown postData={postData} user={user} onDelete={handleDeletePost} onChangePrivacy={handleChangePostPrivacy} />
+                        {!isEditing && <PostOptionDropdown postData={postData} user={user} onDelete={handleDeletePost} onChangePrivacy={handleChangePostPrivacy} onToggleEdit={() => setIsEditing(!isEditing)} />}
                     </div>
                 </div>
-                <p className="">{<PostTextContent text={displayText} />}
-                    <button onClick={toggleShowMore} className="select-none text-sm font-medium hover:underline ml-2 text-gray-500 dark:text-white/50">
-                        {showFullText ? '' : "Show more"}
-                    </button>
-                </p>
+                {isEditing ? (
+                    <>
+                        <Textarea value={updatedText} onChange={(e) => setUpdatedText(e.target.value)} />
+                        <div className="flex justify-end gap-2 mt-2">
+                            <button
+                                onClick={() => { handleEditPost(postData._id) }}
+                                className="text-xs font-semibold text-gray-500 dark:text-white/50 hover:underline select-none"
+                            >
+                                Save
+                            </button>
+                            <button
+                                onClick={() => { setIsEditing(false); setUpdatedText(postData?.content) }}
+                                className="text-xs font-semibold text-gray-500 dark:text-white/50 hover:underline select-none"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </>
+                ) : (
+                    <p>
+                        <PostTextContent text={displayText} />
+                        <button onClick={() => { setShowFullText(!showFullText); }} className="select-none text-sm font-medium hover:underline ml-2 text-gray-500 dark:text-white/50">
+                            {showFullText ? '' : "Show more"}
+                        </button>
+                    </p>
+                )
+                }
                 <div className='mt-4'>
                     {renderImages()}
                 </div>

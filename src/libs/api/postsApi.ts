@@ -4,8 +4,8 @@ import { POST_URL } from './constrants';
 export const postsApi = apiConfig.injectEndpoints({
     endpoints: (builder) => ({
         fetchPosts: builder.query({
-            query: ({ page }) => ({
-                url: `${POST_URL}?page=${page}`,
+            query: ({ userId, page }: { userId: String; page: number }) => ({
+                url: `${POST_URL}/${userId}/?page=${page}`,
             }),
             transformResponse: (response: any) => {
                 return response.length ? response : [];
