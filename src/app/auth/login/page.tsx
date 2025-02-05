@@ -3,10 +3,10 @@ import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ToastContainer, toast } from 'react-toastify';
 import ModeToggle from "@/components/Buttons/ThemeToggle";
-import { useAppDispatch } from "@/libs/hooks";
-import { setCredentials } from "@/libs/states/authSlice";
+import { useAppDispatch } from "@/lib/hooks";
+import { setCredentials } from "@/lib/states/authSlice";
 import { Input } from "@/components/ui/inputShadcn";
-import { useLoginMutation } from "@/libs/api/auth/authenApi";
+import { useLoginMutation } from "@/lib/api/auth/authenApi";
 import { Spinner } from '@nextui-org/react';
 
 function Login() {

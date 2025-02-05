@@ -4,7 +4,7 @@ import { ThemeProvider } from "@/components/ui/ThemeProvider";
 import "@/styles/globals.css";
 import StoreProvider from "./StoreProvider";
 import Providers from "@/components/LayoutComponent/ProgressBarProvider";
-import { HeaderWrapper } from "@/components/LayoutComponent/HeaderWrapper";
+import { HeaderWrapper } from "@/components/LayoutComponent/Header/HeaderWrapper";
 
 const inter = Inter({ subsets: ["latin"] });
 

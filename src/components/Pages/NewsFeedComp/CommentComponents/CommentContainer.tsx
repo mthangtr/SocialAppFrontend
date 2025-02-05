@@ -6,13 +6,13 @@ import { useState, Fragment, useEffect, useRef } from "react";
 import {
     useFetchCommentsQuery,
     useCreateCommentMutation,
-} from "@/libs/api/commentsApi";
+} from "@/lib/api/commentsApi";
 import { SendHorizontal } from "lucide-react";
 import { Input } from "@/components/ui/inputShadcn";
 import { Avatar } from "@nextui-org/react";
 import { Button } from "@/components/ui/button";
-import { useAppSelector, useAppDispatch } from '@/libs/hooks';
-import { closeModal } from '@/libs/states/modalSlice';
+import { useAppSelector, useAppDispatch } from '@/lib/hooks';
+import { closeModal } from '@/lib/states/modalSlice';
 import { X } from 'lucide-react';
 
 interface CommentsResponse {

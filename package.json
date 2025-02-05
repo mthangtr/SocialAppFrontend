@@ -37,7 +37,7 @@
         "@tippyjs/react": "^4.2.6",
         "antd": "^5.19.3",
         "autoprefixer": "^10.4.19",
-        "class-variance-authority": "^0.7.0",
+        "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "dayjs": "^1.11.13",
         "embla-carousel": "^8.3.1",
@@ -54,7 +54,7 @@
         "react-redux": "^9.1.2",
         "react-toastify": "^11.0.3",
         "redux": "^5.0.1",
-        "tailwind-merge": "^2.3.0",
+        "tailwind-merge": "^2.6.0",
         "tailwindcss-animate": "^1.0.7"
     },
     "devDependencies": {

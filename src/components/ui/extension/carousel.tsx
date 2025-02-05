@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { EmblaOptionsType } from "embla-carousel";
 import useEmblaCarousel from "embla-carousel-react";
 import { ChevronRightIcon } from "lucide-react";
-import { cn } from "@/libs/utils";
+import { cn } from "@/lib/utils";
 import { ChevronLeftIcon } from "@radix-ui/react-icons";
 import { createContext } from "react";
 

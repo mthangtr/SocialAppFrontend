@@ -1,8 +1,6 @@
-import Header from "@/components/LayoutComponent/Header";
 import RightSidebar from "@/components/LayoutComponent/SidebarRight";
 import LeftSidebar from "@/components/LayoutComponent/SidebarLeft";
 import ScrollableComponent from "@/components/LayoutComponent/ScrollableComponent";
-import Providers from "@/components/LayoutComponent/ProgressBarProvider";
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 

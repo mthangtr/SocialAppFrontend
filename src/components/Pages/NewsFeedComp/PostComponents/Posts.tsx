@@ -14,7 +14,7 @@ import {
     SliderThumbItem,
 } from "@/components/ui/extension/carousel";
 import CommentContainer from '../CommentComponents/CommentContainer';
-import { useUpdatePostMutation, useDeletePostMutation, useSetPrivacyMutation } from '@/libs/api/postsApi';
+import { useUpdatePostMutation, useDeletePostMutation, useSetPrivacyMutation } from '@/lib/api/postsApi';
 import dayjs from 'dayjs';
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
@@ -23,8 +23,8 @@ import 'tippy.js/themes/material.css';
 import PostOptionDropdown from './PostOptionDropdown';
 import { Lock, Globe, Users } from 'lucide-react';
 import { toast } from 'react-toastify';
-import { useAppDispatch, useAppSelector } from '@/libs/hooks';
-import { closeModal } from '@/libs/states/modalSlice';
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { closeModal } from '@/lib/states/modalSlice';
 import { Textarea } from "@heroui/input";
 
 export default function Post({ postsData, user }: { postsData: PostType, user: UserType }) {

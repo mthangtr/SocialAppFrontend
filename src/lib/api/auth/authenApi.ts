@@ -1,5 +1,5 @@
 import { apiConfig } from '../apiConfig';
-import { logout } from '@/libs/states/authSlice';
+import { logout } from '@/lib/states/authSlice';
 import { AUTH_URL } from '../constrants';
 
 export const authenApi = apiConfig.injectEndpoints({

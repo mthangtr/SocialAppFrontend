@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { CommentType, UserType } from "@/types/Global";
 import { SendHorizontal } from "lucide-react";
 import { TimeAgo } from "@/utils/FormatTime";
-import { useFetchRepliesForCommentQuery, useEditCommentMutation, useRemoveCommentMutation, useReactToCommentMutation } from "@/libs/api/commentsApi";
+import { useFetchRepliesForCommentQuery, useEditCommentMutation, useRemoveCommentMutation, useReactToCommentMutation } from "@/lib/api/commentsApi";
 import { Ellipsis } from 'lucide-react';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import Tippy from '@tippyjs/react';

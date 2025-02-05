@@ -9,9 +9,9 @@ import { Upload } from 'lucide-react';
 import { UserType } from "@/types/Global";
 import {
     useCreatePostMutation
-} from '@/libs/api/postsApi';
-import { useAppDispatch, useAppSelector } from '@/libs/hooks';
-import { closeModal } from '@/libs/states/modalSlice';
+} from '@/lib/api/postsApi';
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { closeModal } from '@/lib/states/modalSlice';
 
 function InputStatus({ user, onPostCreated }: { user: UserType, onPostCreated: (post: any) => void }) {
     const [isModalOpen, setIsModalOpen] = useState(false);

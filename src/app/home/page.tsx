@@ -5,11 +5,11 @@ import { PostType, UserType } from '@/types/Global';
 import { useState, useEffect } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Spinner } from "@nextui-org/react";
-import { useFetchPostsQuery } from '@/libs/api/postsApi';
+import { useFetchPostsQuery } from '@/lib/api/postsApi';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
-import { useAppDispatch, useAppSelector } from '@/libs/hooks';
-import { closeModal } from '@/libs/states/modalSlice';
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { closeModal } from '@/lib/states/modalSlice';
 
 export default function NewsFeed() {
     const [posts, setPosts] = useState<PostType[]>([]);
