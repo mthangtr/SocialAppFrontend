@@ -3,6 +3,7 @@ import { setupListeners } from '@reduxjs/toolkit/query/react';
 import { authReducer } from './states/authSlice';
 import { apiConfig } from './api/apiConfig';
 import modalReducer from './states/modalSlice';
+import commentsReducer from './states/commentsSlice';
 
 const makeStore = () => {
     const store = configureStore({
@@ -10,6 +11,7 @@ const makeStore = () => {
             [apiConfig.reducerPath]: apiConfig.reducer,
             auth: authReducer,
             modal: modalReducer,
+            comments: commentsReducer,
         },
         middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(apiConfig.middleware),
         devTools: true,

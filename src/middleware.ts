@@ -36,5 +36,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/', '/home', '/profile', '/search', '/friend-suggestion', '/message'],
+    matcher: ['/', '/home', '/profile', '/search', '/friend-suggestion'],
 };

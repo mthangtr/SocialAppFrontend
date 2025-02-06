@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import {
     useGetTotalCommentsByPostIdQuery
 } from '@/lib/api/commentsApi';
-import { useAppDispatch } from '@/lib/hooks';
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { openModal } from '@/lib/states/modalSlice';
 
 function ActionContainer({ postsData, user }: { postsData: PostType, user: UserType }) {
@@ -19,7 +19,8 @@ function ActionContainer({ postsData, user }: { postsData: PostType, user: UserT
     const { data } = useGetTotalCommentsByPostIdQuery(postsData?._id);
     const dispatch = useAppDispatch();
 
-    const totalComments = data?.totalComments ?? 0;
+    const commentCount = useAppSelector((state) => state.comments[postsData?._id] || 0);
+    const totalComments = (data?.totalComments + commentCount) || 0;
 
     const handleReaction = async (reaction: any) => {
         try {
@@ -28,10 +29,6 @@ function ActionContainer({ postsData, user }: { postsData: PostType, user: UserT
         } catch (error) {
             console.error('Error updating reaction:', error);
         }
-    };
-
-    const handleToggleModal = () => {
-        dispatch(openModal(postsData._id));
     };
 
     return (
@@ -44,7 +41,7 @@ function ActionContainer({ postsData, user }: { postsData: PostType, user: UserT
                     <div>
                         <ReactionButton post={postData} onReact={handleReaction} user={user} /> {/* Use ReactionButton */}
                     </div>
-                    <Button variant={"ghost"} onClick={handleToggleModal} >
+                    <Button variant={"ghost"} onClick={() => { dispatch(openModal(postsData._id)) }}>
                         <FontAwesomeIcon icon={faMessage} />
                         <span className="ml-2 select-none">Comment ({totalComments})</span>
                     </Button>

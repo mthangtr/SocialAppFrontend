@@ -5,7 +5,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { useState, Fragment, useEffect, useRef } from "react";
 import {
     useFetchCommentsQuery,
-    useCreateCommentMutation,
+    useCreateCommentMutation
 } from "@/lib/api/commentsApi";
 import { SendHorizontal } from "lucide-react";
 import { Input } from "@/components/ui/inputShadcn";
@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { useAppSelector, useAppDispatch } from '@/lib/hooks';
 import { closeModal } from '@/lib/states/modalSlice';
 import { X } from 'lucide-react';
-
+import { incrementCommentCount } from '@/lib/states/commentsSlice';
 interface CommentsResponse {
     comments: CommentType[];
     hasMore: boolean;
@@ -38,19 +38,9 @@ function CommentContainer({
     const dispatch = useAppDispatch();
     const { isOpen, postId } = useAppSelector((state) => state.modal);
 
-
-    const closeModalHandler = () => {
-        dispatch(closeModal());
-    };
-
-    const [createComment, { isLoading: isCreating, isError: isCreateError, isSuccess: isCreateSuccess, error: createError }] = useCreateCommentMutation();
+    const [createComment] = useCreateCommentMutation();
     const {
-        data: commentsData,
-        isFetching,
-        isLoading,
-        isError,
-        isSuccess,
-        error
+        data: commentsData
     } = useFetchCommentsQuery(
         { postId: postsData._id, page },
         { skip: !isOpen }
@@ -71,12 +61,6 @@ function CommentContainer({
         }
     }, [commentsData, isOpen]);
 
-    const loadMoreComments = () => {
-        if (hasMore) {
-            setPage((prev) => prev + 1);
-        }
-    };
-
     const handleSendComment = async () => {
         if (!commentText.trim()) return;
         try {
@@ -88,6 +72,8 @@ function CommentContainer({
             setComments((prev) => [newComment, ...prev]);
             setCommentText("");
             commentInputRef.current?.blur();
+            // Dispatch the action to increment comment count in Redux
+            dispatch(incrementCommentCount(postsData._id));
         } catch (error) {
             console.error("Failed to send comment:", error);
         }
@@ -108,6 +94,8 @@ function CommentContainer({
                         : comment
                 )
             );
+            // Dispatch the action to increment comment count in Redux
+            dispatch(incrementCommentCount(postsData._id));
             return newReply;
         } catch (error) {
             console.error("Failed to send reply:", error);
@@ -133,7 +121,9 @@ function CommentContainer({
                                             Comments of {postsData?.user?.username}'s post
                                         </div>
                                         <Button
-                                            onClick={closeModalHandler}
+                                            onClick={() => {
+                                                dispatch(closeModal());
+                                            }}
                                             className=""
                                             variant="ghost"
                                             size="icon"
@@ -161,7 +151,7 @@ function CommentContainer({
                                         <div className="flex justify-items-start">
                                             {hasMore && (
                                                 <button
-                                                    onClick={loadMoreComments}
+                                                    onClick={() => { hasMore && setPage((prev) => prev + 1) }}
                                                     className="mt-2 ml-4 text-sm font-semibold hover:underline text-gray-500 dark:text-white/50"
                                                 >
                                                     Load more comments

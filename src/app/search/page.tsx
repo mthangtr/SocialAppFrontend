@@ -20,7 +20,6 @@ interface PostsSearchResponseProps {
 
 const SearchPageRoot = () => {
     const user: UserType = useAppSelector((state) => (state as { auth: { userInfo: UserType } }).auth.userInfo);
-    console.log(user);
     const searchParams = useSearchParams();
     const searchQuery = searchParams.get("query") || "";
     const [pageUsersSearch, setPageUsersSearch] = useState<number>(1);
