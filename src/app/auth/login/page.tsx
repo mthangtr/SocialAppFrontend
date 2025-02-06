@@ -31,6 +31,10 @@ function Login() {
         }
     }, [router]);
 
+    useEffect(() => {
+        setFormData((prev) => ({ ...prev, rememberMe }));
+    }, [rememberMe]);
+
     const handleSubmit = async (event: any) => {
         event.preventDefault();
         if (isSubmitting) return;
@@ -50,7 +54,16 @@ function Login() {
             const response = await login(formData).unwrap();
 
             if (response.status === 400) {
-                toast.error(response.data.error);
+                if (!response || !response.authentication) {
+                    toast.error("Invalid login response");
+                    return;
+                }
+
+                if (response.error) {
+                    toast.error(response.error);
+                    return;
+                }
+
                 setIsButtonDisabled(false);
                 setIsSubmitting(false);
                 return;

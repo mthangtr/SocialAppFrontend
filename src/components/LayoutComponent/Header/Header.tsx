@@ -16,7 +16,6 @@ import {
 } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/inputShadcn";
-import NotificationsIcon from '@mui/icons-material/Notifications';
 import ModeToggle from "@/components/Buttons/ThemeToggle";
 import { LogOut } from 'lucide-react';
 import { UserType } from "@/types/Global";
@@ -30,9 +29,21 @@ import { useFetchUsersSearchQuery } from "@/lib/api/searchApi";
 import SearchResultsPopper from "./SearchResultsPopper";
 import { X } from "lucide-react";
 import { Spinner } from "@nextui-org/react";
+import { Home, Bell } from "lucide-react";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
+interface HeaderProps {
+    isSearchPage?: boolean;
+}
 
-function Header() {
+interface UsersSearchResponseProps {
+    users: UserType[];
+    totalPages: number;
+}
+
+const Header: React.FC<HeaderProps> = ({ isSearchPage }) => {
     const user: UserType = useAppSelector((state) => (state as { auth: { userInfo: UserType } }).auth.userInfo);
+    const pathname = usePathname();
     const [inputValue, setInputValue] = useState<string>("");
     const [page, setPage] = useState<number>(1);
     const [showResults, setShowResults] = useState<boolean>(false);
@@ -42,7 +53,7 @@ function Header() {
     const [logout] = useLogoutMutation();
 
     const debouncedSearchTerm = useDebounce(inputValue, 500);
-    const { data: usersSearchData, isLoading: isSearchLoading } = useFetchUsersSearchQuery({ page, search: debouncedSearchTerm }, { skip: !debouncedSearchTerm }) as { data: UserType[], isLoading: boolean };
+    const { data: usersSearchResponse, isLoading: isSearchLoading } = useFetchUsersSearchQuery({ page, search: debouncedSearchTerm }, { skip: !debouncedSearchTerm }) as { data: UsersSearchResponseProps, isLoading: boolean };
 
     useEffect(() => {
         if (inputValue) {
@@ -70,8 +81,6 @@ function Header() {
             router.push(`/search?query=${encodeURIComponent(inputValue.trim())}`);
         }
     };
-
-
 
     return (
         <header className="bg-background px-4 py-2 border-b-2 shadow-md fixed top-0 z-10 w-full">
@@ -107,16 +116,23 @@ function Header() {
                             </div>
                         )}
                     </div>
-                    <SearchResultsPopper
-                        users={usersSearchData || []}
+                    {inputValue != "" && <SearchResultsPopper
+                        users={usersSearchResponse?.users || []}
                         showResults={showResults}
                         inputValue={inputValue}
                         setShowResults={setShowResults}
-                    />
+                    />}
                 </div>
+                {/* isSearchPage => show the h2 Results here but the problems was that this position was not in the center position of the header  */}
                 <div className="flex items-center space-x-4">
+                    {pathname !== "/home" &&
+                        <Link href={`/home`} passHref>
+                            <Button variant="outline" size="icon">
+                                <Home />
+                            </Button>
+                        </Link>}
                     <Button variant="outline" size="icon">
-                        <NotificationsIcon />
+                        <Bell />
                     </Button>
                     <MenubarMenu>
                         <MenubarTrigger>

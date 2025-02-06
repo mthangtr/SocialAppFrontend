@@ -48,10 +48,6 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
         }
     }, [postData?.content?.length]);
 
-    useEffect(() => {
-
-    }, [privacy]);
-
     const handleDeletePost = async (postId: string) => {
         try {
             await deletePost({ userId: user._id, postId }).unwrap();
@@ -178,7 +174,7 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
         <>
             <div className="mt-8 border px-6 py-4 rounded-lg shadow-lg bg-background">
                 <div className="flex items-center mb-4">
-                    <Avatar className="mr-4 select-none" src={`${postData?.user?.pfp?.toString()}`} size="md" />
+                    <Avatar className="mr-4 select-none" src={`${postData?.user?.pfp?.toString() || "/assets/images/default.png"}`} size="md" />
                     <div className='flex justify-between w-full'>
                         <div className='flex flex-col items-start justify-center w-full'>
                             <p className="font-semibold text-lg">{postData?.user?.username}</p>

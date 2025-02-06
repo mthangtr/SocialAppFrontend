@@ -4,7 +4,6 @@ import { UserType } from "@/types/Global";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-
 interface SearchResultsPopperProps {
     users: UserType[];
     showResults: boolean;
