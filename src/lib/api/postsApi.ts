@@ -51,6 +51,13 @@ export const postsApi = apiConfig.injectEndpoints({
             }),
             invalidatesTags: ['Post'],
         }),
+        fetchPostByUserId: builder.query({
+            query: ({ userId, page, viewerId }) => ({
+                url: `${POST_URL}/user/${userId}?page=${page}&viewerId=${viewerId}`,
+            }),
+            transformResponse: (response: any) => response,
+            providesTags: ['Post'],
+        }),
     }),
 });
 
@@ -61,4 +68,5 @@ export const {
     useUpdatePostMutation,
     useDeletePostMutation,
     useSetPrivacyMutation,
+    useFetchPostByUserIdQuery,
 } = postsApi;

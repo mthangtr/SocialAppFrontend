@@ -69,7 +69,7 @@ const SearchPageRoot = () => {
                 </Button>}
             >
                 {postsSearchResponse?.posts.map((post) => (
-                    <Post key={post._id} postsData={post} user={user} />
+                    <Post key={post?._id} postsData={post} user={user} />
                 ))}
             </InfiniteScroll>
         </>

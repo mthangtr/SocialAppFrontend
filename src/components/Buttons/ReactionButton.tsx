@@ -20,11 +20,11 @@ const ReactionButton = ({ post, onReact, user }: { post: PostType, onReact: (rea
     const [selectedReaction, setSelectedReaction] = useState<string | null>(null);
 
     useEffect(() => {
-        const userReaction = post?.reactions?.find(r => r.user._id === user._id);
+        const userReaction = post?.reactions?.find(r => r.user?._id === user?._id);
         if (userReaction) {
             setSelectedReaction(userReaction.type);
         }
-    }, [post.reactions, user._id]);
+    }, [post.reactions, user?._id]);
 
     const handleReaction = (reaction: string) => {
         if (selectedReaction === reaction) {

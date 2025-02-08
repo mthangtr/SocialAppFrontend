@@ -7,11 +7,12 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { Spinner } from "@nextui-org/react";
 import { useFetchPostsQuery } from '@/lib/api/postsApi';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { toast } from 'react-toastify';
-import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { useAppDispatch } from '@/lib/hooks';
 import { closeModal } from '@/lib/states/modalSlice';
+import { useToast } from '@/hooks/use-toast';
 
 export default function NewsFeed() {
+    const toast = useToast();
     const [posts, setPosts] = useState<PostType[]>([]);
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
@@ -30,7 +31,10 @@ export default function NewsFeed() {
 
     useEffect(() => {
         if (query === 'true') {
-            toast.success("Logged out successfully");
+            toast.toast({
+                title: "Login successful",
+                description: "Welcome back!",
+            })
             router.replace("/home");
         }
         const storedUser = localStorage.getItem("userInfo");
@@ -59,7 +63,10 @@ export default function NewsFeed() {
     };
 
     const handlePostCreated = (newPost: PostType) => {
-        toast.success("Post created successfully");
+        toast.toast({
+            title: "Post created",
+            description: "Your post has been created successfully.",
+        })
         dispatch(closeModal());
         setPosts(prev => [newPost, ...prev]);
     };

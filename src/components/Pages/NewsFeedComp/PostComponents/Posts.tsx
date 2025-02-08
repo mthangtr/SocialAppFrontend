@@ -22,25 +22,24 @@ import 'tippy.js/animations/shift-away.css';
 import 'tippy.js/themes/material.css';
 import PostOptionDropdown from './PostOptionDropdown';
 import { Lock, Globe, Users } from 'lucide-react';
-import { toast } from 'react-toastify';
-import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { useAppDispatch } from '@/lib/hooks';
 import { closeModal } from '@/lib/states/modalSlice';
-import { Textarea } from "@heroui/input";
+import EditForm from './EditForm';
+import { useToast } from "@/hooks/use-toast";
 
 export default function Post({ postsData, user }: { postsData: PostType, user: UserType }) {
+    const toast = useToast();
     const [postData, setPostData] = useState<PostType | null>(postsData);
     const [showFullText, setShowFullText] = useState(false);
     const [showCarousel, setShowCarousel] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [updatedText, setUpdatedText] = useState(postsData?.content);
-    const [privacy, setPrivacy] = useState(postsData?.privacy);
 
     const dispatch = useAppDispatch();
-    const { postId } = useAppSelector(state => state.modal);
 
-    const [updatePost, { isLoading: isUpdating, isError: isUpdateError, isSuccess: isUpdateSuccess, error: updateError }] = useUpdatePostMutation();
-    const [deletePost, { isLoading: isDeleting, isError: isDeleteError, isSuccess: isDeleteSuccess, error: deleteError }] = useDeletePostMutation();
-    const [setPostPrivacy, { isLoading: isSettingPrivacy, isError: isSetPrivacyError, isSuccess: isSetPrivacySuccess, error: setPrivacyError }] = useSetPrivacyMutation();
+    const [updatePost] = useUpdatePostMutation();
+    const [deletePost] = useDeletePostMutation();
+    const [setPostPrivacy] = useSetPrivacyMutation();
 
     useEffect(() => {
         if (postData?.content?.length <= maxLength) {
@@ -51,7 +50,10 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
     const handleDeletePost = async (postId: string) => {
         try {
             await deletePost({ userId: user._id, postId }).unwrap();
-            toast.success("Post deleted successfully");
+            toast.toast({
+                title: 'Success',
+                description: 'Post deleted successfully',
+            })
             if (postId === postData?._id) {
                 dispatch(closeModal());
             }
@@ -64,15 +66,23 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
     const handleChangePostPrivacy = async (newPrivacy: string) => {
         try {
             await setPostPrivacy({ userId: user._id, postId: postData?._id, privacy: newPrivacy }).unwrap();
+            toast.toast({
+                title: 'Success',
+                description: 'Privacy updated successfully',
+            })
             setPostData(prev => prev ? { ...prev, privacy: newPrivacy } : null);
         } catch (error) {
             console.error(error);
         }
     };
 
-    const handleEditPost = async (postId: string) => {
+    const handleEditPost = async (postId: string, newText: string) => {
         try {
-            const updatedPost = await updatePost({ userId: user._id, postId, data: { content: updatedText } }).unwrap();
+            const updatedPost = await updatePost({ userId: user._id, postId, data: { content: newText } }).unwrap();
+            toast.toast({
+                title: 'Success',
+                description: 'Post updated successfully',
+            })
             setPostData(updatedPost);
         } catch (error) {
             console.error(error);
@@ -199,29 +209,24 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
                     </div>
                 </div>
                 {isEditing ? (
-                    <>
-                        <Textarea value={updatedText} onChange={(e) => setUpdatedText(e.target.value)} />
-                        <div className="flex justify-end gap-2 mt-2">
-                            <button
-                                onClick={() => { handleEditPost(postData._id) }}
-                                className="text-xs font-semibold text-gray-500 dark:text-white/50 hover:underline select-none"
-                            >
-                                Save
-                            </button>
-                            <button
-                                onClick={() => { setIsEditing(false); setUpdatedText(postData?.content) }}
-                                className="text-xs font-semibold text-gray-500 dark:text-white/50 hover:underline select-none"
-                            >
-                                Cancel
-                            </button>
-                        </div>
-                    </>
+                    <EditForm
+                        initialContent={updatedText}
+                        onSave={(newText) => {
+                            handleEditPost(postData._id, newText);
+                            setIsEditing(false);
+                        }}
+                        onCancel={() => {
+                            setIsEditing(false);
+                            setUpdatedText(postData?.content);
+                        }} />
                 ) : (
                     <p>
-                        <PostTextContent text={displayText} />
-                        <button onClick={() => { setShowFullText(!showFullText); }} className="select-none text-sm font-medium hover:underline ml-2 text-gray-500 dark:text-white/50">
-                            {showFullText ? '' : "Show more"}
-                        </button>
+                        {text != "" && <>
+                            <PostTextContent text={displayText} />
+                            <button onClick={() => { setShowFullText(!showFullText); }} className="select-none text-sm font-medium hover:underline ml-2 text-gray-500 dark:text-white/50">
+                                {showFullText ? '' : "Show more"}
+                            </button>
+                        </>}
                     </p>
                 )
                 }

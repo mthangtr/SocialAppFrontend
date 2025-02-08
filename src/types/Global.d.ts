@@ -4,13 +4,15 @@ type CommentID = string;
 
 // User Schema
 export interface UserType {
-    _id: String;
-    username: string;
-    email: string;
-    password: string;
-    pfp: string;
-    friends: string[];
-    friendRequests: string[];
+    _id?: string;
+    username?: string;
+    email?: string;
+    password?: string;
+    pfp?: string;
+    friends?: string[];
+    friendRequests?: string[];
+    bio?: string;
+    backgroundImg?: string;
 }
 
 // Reaction Schema

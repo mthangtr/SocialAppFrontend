@@ -10,7 +10,23 @@ export const userApi = apiConfig.injectEndpoints({
             transformResponse: (response: any) => response,
             providesTags: ['User'],
         }),
+        updateProfile: builder.mutation({
+            query: ({ userId, body }: { userId: string; body: any }) => ({
+                url: `${USER_URL}/${userId}/update-profile`,
+                method: 'PATCH',
+                body,
+            }),
+            invalidatesTags: ['User'],
+        }),
+        updateAvatar: builder.mutation({
+            query: ({ userId, formData }) => ({
+                url: `${USER_URL}/${userId}/avatar`,
+                method: 'PUT',
+                body: formData,
+            }),
+            invalidatesTags: ['User'],
+        }),
     }),
 });
 
-export const { useFetchUserByIdQuery } = userApi;
+export const { useFetchUserByIdQuery, useUpdateProfileMutation, useUpdateAvatarMutation } = userApi;

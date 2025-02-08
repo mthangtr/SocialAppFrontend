@@ -1,15 +1,16 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ToastContainer, toast } from 'react-toastify';
 import ModeToggle from "@/components/Buttons/ThemeToggle";
 import { useAppDispatch } from "@/lib/hooks";
 import { setCredentials } from "@/lib/states/authSlice";
 import { Input } from "@/components/ui/inputShadcn";
 import { useLoginMutation } from "@/lib/api/auth/authenApi";
 import { Spinner } from '@nextui-org/react';
+import { useToast } from "@/hooks/use-toast";
 
 function Login() {
+    const toast = useToast();
     const [rememberMe, setRememberMe] = useState(false);
     const [formData, setFormData] = useState({
         email: "",
@@ -26,10 +27,13 @@ function Login() {
 
     useEffect(() => {
         if (query === 'true') {
-            toast.success("Logged out successfully");
-            router.replace("/auth/login", undefined);
+            toast.toast({
+                description: "You have been logged out successfully",
+            });
+            router.replace("/auth/login");
         }
-    }, [router]);
+    }, [query, router]);
+
 
     useEffect(() => {
         setFormData((prev) => ({ ...prev, rememberMe }));
@@ -42,7 +46,9 @@ function Login() {
         setIsButtonDisabled(true);
 
         if (!formData.email || !formData.password) {
-            toast.warn("Please fill in all fields");
+            toast.toast({
+                description: "Please fill in all fields",
+            });
             setTimeout(() => {
                 setIsButtonDisabled(false);
                 setIsSubmitting(false);
@@ -55,12 +61,16 @@ function Login() {
 
             if (response.status === 400) {
                 if (!response || !response.authentication) {
-                    toast.error("Invalid login response");
+                    toast.toast({
+                        description: "Invalid login response",
+                    });
                     return;
                 }
 
                 if (response.error) {
-                    toast.error(response.error);
+                    toast.toast({
+                        description: response.error,
+                    });
                     return;
                 }
 
@@ -76,13 +86,16 @@ function Login() {
                 dispatch(setCredentials(user));
                 router.push("/home?loggedIn=true");
             } else {
-                toast.error("Invalid login response");
+                toast.toast({
+                    description: "Invalid login response",
+                });
                 setIsButtonDisabled(false);
                 setIsSubmitting(false);
             }
         } catch (error) {
-            console.error("Login error:", error);
-            toast.error("Login failed. Please try again.");
+            toast.toast({
+                description: "Login failed. Please try again.",
+            });
             setTimeout(() => {
                 setIsButtonDisabled(false);
                 setIsSubmitting(false);
@@ -104,12 +117,6 @@ function Login() {
 
     return (
         <section className="relative">
-            <ToastContainer
-                autoClose={3000}
-                hideProgressBar={true}
-                closeOnClick
-                pauseOnHover
-            />
             <span className="absolute m-2">
                 <ModeToggle />
             </span>

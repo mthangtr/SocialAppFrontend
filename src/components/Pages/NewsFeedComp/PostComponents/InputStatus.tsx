@@ -10,7 +10,7 @@ import { UserType } from "@/types/Global";
 import {
     useCreatePostMutation
 } from '@/lib/api/postsApi';
-import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { useAppDispatch } from '@/lib/hooks';
 import { closeModal } from '@/lib/states/modalSlice';
 
 function InputStatus({ user, onPostCreated }: { user: UserType, onPostCreated: (post: any) => void }) {
@@ -23,7 +23,7 @@ function InputStatus({ user, onPostCreated }: { user: UserType, onPostCreated: (
 
     const dispatch = useAppDispatch();
 
-    const [createPost, { isLoading, isSuccess, isError, error }] = useCreatePostMutation();
+    const [createPost] = useCreatePostMutation();
 
     const handleStatusClick = () => {
         setIsModalOpen(true);

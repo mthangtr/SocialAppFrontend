@@ -2,9 +2,11 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/ui/ThemeProvider";
 import "@/styles/globals.css";
+import 'react-photo-view/dist/react-photo-view.css';
 import StoreProvider from "./StoreProvider";
 import Providers from "@/components/LayoutComponent/ProgressBarProvider";
 import { HeaderWrapper } from "@/components/LayoutComponent/Header/HeaderWrapper";
+import { Toaster } from "@/components/ui/toaster"
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -33,6 +35,7 @@ export default function RootLayout({
             <Providers>
               <HeaderWrapper />
               {children}
+              <Toaster />
             </Providers>
           </ThemeProvider>
         </StoreProvider>

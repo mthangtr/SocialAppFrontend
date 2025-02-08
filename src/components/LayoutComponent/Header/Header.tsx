@@ -70,6 +70,7 @@ const Header: React.FC<HeaderProps> = ({ isSearchPage }) => {
     const handleLogOut = async () => {
         try {
             await logout({}).unwrap();
+
             router.push("/auth/login?loggedOut=true");
         } catch (error) {
             console.error("Logout error:", error);
@@ -138,12 +139,14 @@ const Header: React.FC<HeaderProps> = ({ isSearchPage }) => {
                         <MenubarTrigger>
                             <Avatar className="cursor-pointer">
                                 <AvatarImage
-                                    src={`${user?.pfp}`} alt={`${user?.username}`} />
+                                    src={`${user?.pfp}` || "/assets/images/default.png"} alt={`${user?.username}`} />
                                 <AvatarFallback>User</AvatarFallback>
                             </Avatar>
                         </MenubarTrigger>
                         <MenubarContent>
-                            <MenubarItem>Profile</MenubarItem>
+                            <MenubarItem>
+                                <Link href={`/profile/${user?._id}`}>Profile</Link>
+                            </MenubarItem>
                             <MenubarSeparator />
                             <MenubarItem>
                                 Theme: <MenubarShortcut><ModeToggle /></MenubarShortcut>
