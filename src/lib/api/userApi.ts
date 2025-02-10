@@ -26,7 +26,72 @@ export const userApi = apiConfig.injectEndpoints({
             }),
             invalidatesTags: ['User'],
         }),
+        sendFriendRequest: builder.mutation({
+            query: ({ senderId, receiverId }: { senderId: string; receiverId: string }) => ({
+                url: `${USER_URL}/send-friend-request`,
+                method: 'POST',
+                body: { senderId, receiverId },
+            }),
+            invalidatesTags: ['User'],
+        }),
+        acceptFriendRequest: builder.mutation({
+            query: ({ senderId, receiverId }: { senderId: string; receiverId: string }) => ({
+                url: `${USER_URL}/accept-friend-request`,
+                method: 'POST',
+                body: { senderId, receiverId },
+            }),
+            invalidatesTags: ['User'],
+        }),
+        rejectFriendRequest: builder.mutation({
+            query: ({ senderId, receiverId }: { senderId: string; receiverId: string }) => ({
+                url: `${USER_URL}/reject-friend-request`,
+                method: 'POST',
+                body: { senderId, receiverId },
+            }),
+            invalidatesTags: ['User'],
+        }),
+        cancelSendFriendRequest: builder.mutation({
+            query: ({ senderId, receiverId }: { senderId: string; receiverId: string }) => ({
+                url: `${USER_URL}/cancel-sent-friend-request`,
+                method: 'POST',
+                body: { senderId, receiverId },
+            }),
+            invalidatesTags: ['User'],
+        }),
+        fetchFriendRequests: builder.query({
+            query: ({ userId, limit }: { userId: string; limit?: number }) => ({
+                url: `${USER_URL}/${userId}/friend-requests?limit=${limit}`,
+            }),
+            transformResponse: (response: any) => response,
+            providesTags: ['User'],
+        }),
+        fetchFriends: builder.query({
+            query: ({ userId, limit }: { userId: string; limit?: number }) => ({
+                url: `${USER_URL}/${userId}/friends?limit=${limit}`,
+            }),
+            transformResponse: (response: any) => response,
+            providesTags: ['User'],
+        }),
+        unFriend: builder.mutation({
+            query: ({ userId, friendId }: { userId: string; friendId: string }) => ({
+                url: `${USER_URL}/${userId}/unfriend`,
+                method: 'POST',
+                body: { friendId },
+            }),
+            invalidatesTags: ['User'],
+        }),
     }),
 });
 
-export const { useFetchUserByIdQuery, useUpdateProfileMutation, useUpdateAvatarMutation } = userApi;
+export const {
+    useFetchUserByIdQuery,
+    useUpdateProfileMutation,
+    useUpdateAvatarMutation,
+    useSendFriendRequestMutation,
+    useAcceptFriendRequestMutation,
+    useRejectFriendRequestMutation,
+    useCancelSendFriendRequestMutation,
+    useFetchFriendRequestsQuery,
+    useFetchFriendsQuery,
+    useUnFriendMutation,
+} = userApi;

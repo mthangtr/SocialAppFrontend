@@ -12,6 +12,7 @@ import { Button } from "../ui/button";
 import { UserType } from "@/types/Global";
 import Link from "next/link";
 import { useAppSelector } from "@/lib/hooks";
+import { User } from 'lucide-react';
 
 function LefttSidebar() {
     const [isClient, setIsClient] = useState(false);
@@ -42,16 +43,16 @@ function LefttSidebar() {
                         <h1 className="ml-4 text-lg font-medium">Home</h1>
                     </Button>
                 </Link>
+                <Link href={isClient ? `/profile/${user?._id}` : "#"}>
+                    <Button variant={"ghost"} className="flex justify-start px-2 py-6 cursor-pointer w-full">
+                        <User className="ml-1" />
+                        <h1 className="ml-4 text-lg font-medium">Profile</h1>
+                    </Button>
+                </Link>
                 <Link href="/connect">
                     <Button variant={"ghost"} className="flex justify-start px-2 py-6 cursor-pointer w-full">
                         <PeopleIcon className="ml-1" />
                         <h1 className="ml-4 text-lg font-medium">Friends</h1>
-                    </Button>
-                </Link>
-                <Link href="/profile">
-                    <Button variant={"ghost"} className="flex justify-start px-2 py-6 cursor-pointer w-full">
-                        <GroupsIcon className="ml-1" />
-                        <h1 className="ml-4 text-lg font-medium">Profile</h1>
                     </Button>
                 </Link>
             </div>

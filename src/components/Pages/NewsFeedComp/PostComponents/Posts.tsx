@@ -26,6 +26,8 @@ import { useAppDispatch } from '@/lib/hooks';
 import { closeModal } from '@/lib/states/modalSlice';
 import EditForm from './EditForm';
 import { useToast } from "@/hooks/use-toast";
+import { PhotoProvider, PhotoView } from 'react-photo-view';
+import Link from 'next/link';
 
 export default function Post({ postsData, user }: { postsData: PostType, user: UserType }) {
     const toast = useToast();
@@ -65,7 +67,7 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
 
     const handleChangePostPrivacy = async (newPrivacy: string) => {
         try {
-            await setPostPrivacy({ userId: user._id, postId: postData?._id, privacy: newPrivacy }).unwrap();
+            const resp = await setPostPrivacy({ userId: user?._id, postId: postData?._id, privacy: newPrivacy }).unwrap();
             toast.toast({
                 title: 'Success',
                 description: 'Privacy updated successfully',
@@ -75,7 +77,6 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
             console.error(error);
         }
     };
-
     const handleEditPost = async (postId: string, newText: string) => {
         try {
             const updatedPost = await updatePost({ userId: user._id, postId, data: { content: newText } }).unwrap();
@@ -184,10 +185,14 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
         <>
             <div className="mt-8 border px-6 py-4 rounded-lg shadow-lg bg-background">
                 <div className="flex items-center mb-4">
-                    <Avatar className="mr-4 select-none" src={`${postData?.user?.pfp?.toString() || "/assets/images/default.png"}`} size="md" />
+                    <Link href={`/profile/${postData?.user?._id}`} passHref>
+                        <Avatar className="mr-4 select-none" src={`${postData?.user?.pfp?.toString() || "/assets/images/default.png"}`} size="md" />
+                    </Link>
                     <div className='flex justify-between w-full'>
                         <div className='flex flex-col items-start justify-center w-full'>
-                            <p className="font-semibold text-lg">{postData?.user?.username}</p>
+                            <Link href={`/profile/${postData?.user?._id}`} passHref>
+                                <p className="font-semibold text-lg">{postData?.user?.username}</p>
+                            </Link>
                             <div className="flex items-center gap-2">
                                 {getPrivacyIcon(postData?.privacy)}
                                 <Tippy
@@ -235,7 +240,7 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
                 </div>
                 {/* Carousel */}
                 {showCarousel && (
-                    <div className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center">
+                    <div className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center overflow-hidden">
                         <button className="absolute top-4 right-4 text-white" onClick={handleCarouselClose}>
                             Close
                         </button>
@@ -244,7 +249,11 @@ export default function Post({ postsData, user }: { postsData: PostType, user: U
                                 <CarouselMainContainer className="h-full">
                                     {images?.map((img, idx) => (
                                         <SliderMainItem key={idx} className=" items-center justify-center h-full rounded-md">
-                                            <img src={img} alt={`Slide ${idx + 1}`} className="w-full h-full object-cover rounded-md" />
+                                            <PhotoProvider>
+                                                <PhotoView src={img}>
+                                                    <img src={img} alt={`Slide ${idx + 1}`} className="w-full h-full object-cover rounded-md" />
+                                                </PhotoView>
+                                            </PhotoProvider>
                                         </SliderMainItem>
                                     ))}
                                 </CarouselMainContainer>

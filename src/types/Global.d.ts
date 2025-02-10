@@ -8,9 +8,9 @@ export interface UserType {
     username?: string;
     email?: string;
     password?: string;
-    pfp?: string;
-    friends?: string[];
-    friendRequests?: string[];
+    pfp: string;
+    friends?: UserType[];
+    friendRequests?: UserType[];
     bio?: string;
     backgroundImg?: string;
 }

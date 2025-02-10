@@ -3,7 +3,7 @@ import { UserType } from "@/types/Global";
 import { Avatar } from "@nextui-org/avatar";
 import { Button } from "@/components/ui/button";
 import EditForm from "../NewsFeedComp/PostComponents/EditForm";
-import { useUpdateProfileMutation } from "@/lib/api/userApi";
+import { useUpdateProfileMutation, useSendFriendRequestMutation, useCancelSendFriendRequestMutation, useUnFriendMutation } from "@/lib/api/userApi";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/inputShadcn";
 import { PhotoProvider, PhotoView } from 'react-photo-view';
@@ -27,6 +27,9 @@ function ProfileInfo({ user, currentUser }: ProfileInfoProps) {
     const [userNewUsername, setUserNewUsername] = useState(user?.username);
 
     const [updateProfile, { isLoading }] = useUpdateProfileMutation();
+    const [sendFriendRequest] = useSendFriendRequestMutation();
+    const [cancelSendFriendRequest] = useCancelSendFriendRequestMutation();
+    const [unFriend] = useUnFriendMutation();
 
     useEffect(() => {
         setIsClient(true);
@@ -42,7 +45,7 @@ function ProfileInfo({ user, currentUser }: ProfileInfoProps) {
         if (!currentUser?._id) return;
 
         try {
-            let updatedUser;
+            let updatedUser: UserType;
             switch (updateType) {
                 case "bio":
                     updatedUser = await updateProfile({ userId: currentUser?._id, body: { bio: updatedData } }).unwrap();
@@ -77,6 +80,25 @@ function ProfileInfo({ user, currentUser }: ProfileInfoProps) {
             }
         }
     };
+
+    const handleUnFriend = async ({ currentProfileUserId }: { currentProfileUserId: string }) => {
+        try {
+            const response = await unFriend({ userId: currentUser?._id, friendId: currentProfileUserId }).unwrap();
+            console.log(response);
+            dispatch(setCredentials(response.user));
+            if (response) {
+                toast.toast({
+                    title: "You have lost a friend.",
+                    description: "We glad you guys to be friend again."
+                })
+            }
+        } catch (error) {
+            console.log(error)
+            toast.toast({
+                description: error,
+            })
+        }
+    }
 
     const testBackgroundImage =
         "https://fastly.picsum.photos/id/0/5000/3333.jpg?hmac=_j6ghY5fCfSD6tvtcV74zXivkJSPIfR9B8w34XeQmvU";
@@ -127,7 +149,7 @@ function ProfileInfo({ user, currentUser }: ProfileInfoProps) {
                     </>
                 )}
 
-                {isClient && currentUser?._id === user?._id && (
+                {isClient && currentUser?._id === user?._id ? (
                     <div className="flex mt-4">
                         {isEditing ? (
                             <div className="flex gap-2">
@@ -146,6 +168,45 @@ function ProfileInfo({ user, currentUser }: ProfileInfoProps) {
                                 </Button>
                             </>
                         )}
+                    </div>
+                ) : (
+                    <div className="flex mt-4">
+                        {user?.friends?.some((fr: UserType) => fr?._id === currentUser?._id) ?
+                            (
+                                <Button variant="outline" color="primary"
+                                    onClick={() => handleUnFriend({ currentProfileUserId: user?._id })}
+                                >
+                                    Unfriend
+                                </Button>
+                            ) : (user?.friendRequests?.some((frReq: UserType) => frReq?._id === currentUser?._id) ? (
+                                <Button
+                                    variant="outline"
+                                    color="primary"
+                                    onClick={() => {
+                                        cancelSendFriendRequest({ senderId: currentUser?._id, receiverId: user?._id });
+                                        toast.toast({
+                                            title: "Friend Request Cancelled",
+                                            description: "The friend request has been cancelled successfully.",
+                                        });
+                                    }}
+                                >
+                                    Cancel Request
+                                </Button>
+                            ) : (
+                                <Button
+                                    variant="default"
+                                    color="primary"
+                                    onClick={() => {
+                                        sendFriendRequest({ senderId: currentUser?._id, receiverId: user?._id });
+                                        toast.toast({
+                                            title: "Friend Request Sent",
+                                            description: "The friend request has been sent successfully.",
+                                        });
+                                    }}
+                                >
+                                    Add Friend
+                                </Button>
+                            ))}
                     </div>
                 )}
             </div>

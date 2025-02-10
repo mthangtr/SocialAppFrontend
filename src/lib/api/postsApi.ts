@@ -52,7 +52,7 @@ export const postsApi = apiConfig.injectEndpoints({
             invalidatesTags: ['Post'],
         }),
         fetchPostByUserId: builder.query({
-            query: ({ userId, page, viewerId }) => ({
+            query: ({ userId, page, viewerId }: { userId: string; page: number; viewerId: string }) => ({
                 url: `${POST_URL}/user/${userId}?page=${page}&viewerId=${viewerId}`,
             }),
             transformResponse: (response: any) => response,
