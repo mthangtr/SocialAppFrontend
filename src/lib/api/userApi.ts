@@ -80,6 +80,13 @@ export const userApi = apiConfig.injectEndpoints({
             }),
             invalidatesTags: ['User'],
         }),
+        getSuggestedFriends: builder.query({
+            query: ({ userId }: { userId: string }) => ({
+                url: `${USER_URL}/${userId}/suggest-friends`,
+            }),
+            transformResponse: (response: any) => response,
+            providesTags: ['User'],
+        }),
     }),
 });
 
@@ -94,4 +101,5 @@ export const {
     useFetchFriendRequestsQuery,
     useFetchFriendsQuery,
     useUnFriendMutation,
+    useGetSuggestedFriendsQuery,
 } = userApi;
